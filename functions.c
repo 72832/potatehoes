@@ -37,6 +37,20 @@ void drive(){
 	leftFunc(vexRT[Ch3]);
 }
 
+void puncherFunc(int power){
+	motor[puncher1]=power;
+	motor[puncher2]=power;
+}
+
+void intakeFunc(int power){
+	motor[intake]=power;
+}
+
+void flipperFunc(int power){
+	motor[flipper]=power;
+}
+
+
 // Stop motor
 void stopMotor(int time){
 	wait1Msec(time);
@@ -71,10 +85,10 @@ task lcdEncode(){
 	clearLCD();
 	while(true){
 		displayLCDPos(0,0);
-  	displayNextLCDString("Right Encode: ");
+  	displayNextLCDString("> Enc: ");
 		displayNextLCDNumber(rightEncode());
 		displayLCDPos(1,0);
-		displayNextLCDString("Left Encode:  ");
+		displayNextLCDString("< Enc:  ");
 		displayNextLCDNumber(leftEncode());
 	}
 }
