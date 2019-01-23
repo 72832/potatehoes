@@ -94,8 +94,6 @@ void initialize() {
 }
 
 lcdClear(uart2);
-lcdSetText(uart2,
-1, "Run Auton Prog");
-lcdSetText(uart2,
-2, autonRun);
+lcdSetText(uart2,1, "Run Auton Prog");
+lcdSetText(uart2,2, autonRun);
 }
