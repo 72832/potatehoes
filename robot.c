@@ -1,3 +1,5 @@
+////////////////////////////////////////////////////////////////////////////////////////
+
 #pragma config(Sensor, in3, autonPotent, sensorPotentiometer)
 #pragma config(Sensor, in4, ballIntake, sensorLineFollower)
 #pragma config(Sensor, dgtl1, rightEncoder, sensorQuadEncoder)
@@ -16,15 +18,13 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////////////////////////////////
+
+
 // Competition Control and Duration Settings
 #pragma competitionControl(Competition)
 #pragma autonomousDuration(15)
 #pragma userControlDuration(105)
-
-// SmartMotorLibrary
-#include "jpearman/SmartMotorLib.c"
-
-#include "Vex_Competition_Includes.c"  // Main competition background code...do not modify!
 
 #pragma systemFile
 
@@ -56,40 +56,16 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-//PID
-//Drive Top Level
-// PID using optical shaft encoder
-//
-// Shaft encoder has 360 pulses per revolution
-#define PID_INTEGRAL_LIMIT  50
-#define PD_INTEGRAL_LIMIT  50
+// SmartMotorLibrary
+#include "jpearman/SmartMotorLib.c"
 
-#define LEFT_SENSOR_INDEX    leftEncoder
-#define RIGHT_SENSOR_INDEX   rightEncoder
-#define PID_SENSOR_SCALE     -1
+#include "Vex_Competition_Includes.c"  // Main competition background code...do not modify!
 
-#define LEFT_MOTOR_INDEX    left1
-#define RIGHT_MOTOR_INDEX   right1
-#define PID_MOTOR_SCALE     -1
+#include "src/init.c"
 
-#define PID_DRIVE_MAX       80
-#define PID_DRIVE_MIN     (-80)
+#include "src/auton.c"
 
-// These could be constants but leaving
-// as variables allows them to be modified in the debugger "live"
-
-//auton vars
-//Left
-float pid_Kp = 0.7;
-float pid_Ki = 0.09;
-float pid_Kd = 0.5;
-
-static int pidRunning = 1;
-static float pidRequestedValue;
-
-bool taskRunning = false;
-
-bool driveReverse = false;
+#include "src/opcontrol.c"
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -99,32 +75,14 @@ void pre_auton() {
     // Set bStopTasksBetweenModes to false if you want to keep user created tasks
     // running between Autonomous and Driver controlled modes. You will need to
     // manage all user created tasks if set to false.
-    bStopTasksBetweenModes = false;
-
-    // All activities that occur before the competition starts
-    // Example: clearing encoders, setting servo positions, ...
-    // Enable smart motor library
-    SmartMotorsInit();
-
-    // Define motors plugged into power expander
-    // SmartMotorsAddPowerExtender( motorA, motorB, motorC, motorD );
-
-    // Link motors
-    SmartMotorLinkMotors(left1, left2);
-    SmartMotorLinkMotors(right1, right2);
-    // Current monitor
-    SmartMotorCurrentMonitorEnable();
-    // Smart motor start
-    SmartMotorRun();
-
-    resetEncoders();
+    init();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-#include "auton.c"
+bool driveReverse = false;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -132,46 +90,29 @@ void pre_auton() {
 
 task puncherOn() {
     while (true) {
-        puncherFunc(127);
+        puncherSet = 127;
     }
 }
 
 task puncherOff() {
     while (true) {
-        puncherFunc(0);
+        puncherSet = 0;
     }
 }
 
 task intakeOn() {
     while (true) {
-        intakeFunc(127, 127);
+        intakeSet = 127;
     }
 }
 
 task intakeOff() {
     while (true) {
-        intakeFunc(0, 0);
+        intake = 0;
     }
 }
 
-/*--
-
-task upIntakeOn(){
-	while(true){
-		intake2Func(-127);
-	}
-}
-
-task upIntakeOff(){
-	while(true){
-		intake2Func(0);
-	}
-}
-
---*/
-
 void punch() {
-
     //puncher on
     startTask(puncherOn);
     delayFunc(2000);
@@ -182,7 +123,6 @@ void punch() {
 
 //auton
 void auton() {
-    startTask(straighten);
 
     //1200 from place to flag or to alliance park
     //2000 from place to center
@@ -190,19 +130,6 @@ void auton() {
 
     //intake on
     startTask(intakeOn);
-
-    //drive forward to toggle small flag
-    if (SensorValue[rightEncoder] <= 1500) {
-        leftAuton(-127);
-        rightAuton(127);
-    }
-
-    if (vexRT[Btn8L] == 1) {
-        stopTask(autonomous);
-    }
-
-
-    delayFunc(500);
 
     //intake stop
     stopTask(intakeOn);
@@ -225,30 +152,8 @@ task autonomous() {
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
-void clearLCD() {
-    clearLCDLine(0);
-    clearLCDLine(1);
-}
-
 string mainBattery, backupBattery;
 
-//void lcd display voltage
-void lcdBattery() {
-    clearLCD();
-
-    //Display the Primary Robot battery voltage
-    displayLCDString(0, 0, "Primary: ");
-    sprintf(mainBattery, "%1.2f%c", nImmediateBatteryLevel / 1000.0, 'V'); //Build the value to be displayed
-    displayNextLCDString(mainBattery);
-
-    //Display the Backup battery voltage
-    displayLCDString(1, 0, "Backup: ");
-    sprintf(backupBattery, "%1.2f%c", BackupBatteryLevel / 1000.0, 'V');    //Build the value to be displayed
-    displayNextLCDString(backupBattery);
-
-    //Short delay for the LCD refresh rate
-    wait1Msec(100);
-}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
