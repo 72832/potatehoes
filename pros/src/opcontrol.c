@@ -27,8 +27,49 @@
  * This task should never exit; it should end with some kind of infinite loop, even if empty.
  */
 void operatorControl() {
-	while (1) {
-		printf("Hello PROS User!\n");
-		delay(20);
-	}
+	while(true){
+		// drive program
+		drive();
+
+		// Puncher program
+        if (joystickGetDigital(joyMain, 6, JOY_UP) == 1) {
+			puncherFunc(127);
+		}else{
+			puncherFunc(0);
+		}
+
+        if (joystickGetDigital(joyMain, 7, JOY_UP) == 1) {
+			auton();
+		}
+
+        if (joystickGetDigital(joyMain, 7, JOY_DOWN) == 1) {
+			lcdBattery();
+		}
+
+		//reverse drive so that you can easily flip caps (find in functions)
+        if (joystickGetDigital(joyMain, 8, JOY_DOWN) == 1) {
+			if(driveReverse==false){
+                waitUntil(joystickGetDigital(joyMain, 8, JOY_DOWN), 1000);
+				driveReverse=true;
+				delayFunc(500);
+			}else if(driveReverse==true){
+                waitUntil(joystickGetDigital(joyMain, 8, JOY_DOWN), 1000);
+				driveReverse=false;
+				delayFunc(500);
+			}
+		}
+
+		// Intake program
+        if (joystickGetDigital(joyMain, 5, JOY_UP) == 1) {
+			 intake1Func(127);
+			 intake2Func(127);
+        } else if (joystickGetDigital(joyMain, 6, JOY_DOWN) == 1) {
+				intake1Func(-127);
+        } else if (joystickGetDigital(joyMain, 5, JOY_DOWN) == 1) {
+				intake2Func(-127);
+			}else{
+				intake1Func(0);
+				intake2Func(0);
+			}
+		}
 }

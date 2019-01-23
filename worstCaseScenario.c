@@ -94,114 +94,6 @@ bool driveReverse=false;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void delayFunc(int time){
-	wait1Msec(time);
-}
-
-void puncherFunc(int power){
-	motor[puncher]=power;
-}
-
-void intake1Func(int power1){
-	motor[intake1]=power1;
-}
-
-void intake2Func(int power2){
-	motor[intake2]=power2;
-}
-
-void intakeFunc(int power1, int power2){
-	intake1Func(power1);
-	intake2Func(power2);
-}
-
-float leftAdjust=1.0;
-
-float rightAdjust=1.0;
-
-void leftFunc(int speed1){
-	speed1*=leftAdjust;
-	SetMotor(left1,speed1);
-	SetMotor(left2,speed1);
-	SetMotor(left3,speed1);
-}
-
-void rightFunc(int speed2){
-	speed2*=rightAdjust;
-	SetMotor(right1,speed2);
-	SetMotor(right2,speed2);
-	SetMotor(right3,speed2);
-}
-
-int beforeLeft;
-
-int afterLeft;
-
-int beforeRight;
-
-int afterRight;
-
-void driveAuton(int speed1, int speed2) {
-	if (leftEncAuton > rightEncAuton) {
-
-	}
-
-	setMotor(left1, speed1);
-	setMotor(left2, speed1);
-	setMotor(left3, speed1);
-	setMotor(right1, speed2);
-	setMotor(right2, speed2);
-	setMotor(right3, speed2)
-}
-
-float leftEncAuton(){
-	beforeLeft=leftEncoder*-1;
-	delayFunc(100);
-	afterLeft=leftEncoder;
-	return(afterLeft-beforeLeft);
-}
-
-float rightEncAuton(){
-	beforeRight=rightEncoder;
-	delayFunc(100);
-	afterRight=rightEncoder;
-	return((afterRight-beforeRight)*10);
-}
-
-task straighten(){
-	while(true){
-		if(leftEncAuton()>rightEncAuton()){
-			leftAdjust-=.05;
-		}
-		if(leftEncAuton()<rightEncAuton()){
-			rightAdjust-=.05;
-		}
-		if(leftEncAuton()==rightEncAuton()){
-			rightAdjust=1;
-			leftAdjust=1;
-		}
-	}
-}
-
-void drive(){
-	if (driveReverse) {
-		leftFunc(vexRT[Ch2]);
-		rightFunc(vexRT[Ch3]*-1);
-	} else if (!driveReverse) {
-		rightFunc(vexRT[Ch2]);
-		leftFunc(vexRT[Ch3]*-1);
-	}
-}
-
-void resetEncoders(){
-	SensorValue[ leftEncoder ] = 0;
-  SensorValue[ rightEncoder ] = 0;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 void pre_auton(){
 	// Set bStopTasksBetweenModes to false if you want to keep user created tasks
 	// running between Autonomous and Driver controlled modes. You will need to
@@ -231,7 +123,7 @@ void pre_auton(){
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-#include "auton.c"
+#include "oldCode/auton.c"
 
 /////////////////////////////////////////////////////////////////////////////////////////
 

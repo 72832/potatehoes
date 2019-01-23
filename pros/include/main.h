@@ -25,7 +25,47 @@
 // This prevents multiple inclusion, which isn't bad for this file but is good practice
 #define MAIN_H_
 
-#include <API.h>
+#include "API.h"
+
+//drive Reverse bool to reverse drive set to false
+bool driveReverse=false;
+
+//all the motor ports
+int intake1 = 1;
+int left1 = 2;
+int left2 = 3;
+int left3 = 4;
+int right1 = 5;
+int right2 = 6;
+int right3 = 7;
+//port 8 not used
+int puncher = 9;
+int intake2 = 10;
+
+//the joystick vars
+int joyMain = 1;
+int joyPartner = 2;
+
+//the joystick analog vars
+int analogLeftX = 1;
+int analogLeftY = 2;
+int analogRightY = 3;
+int analogRightX = 4;
+
+//auton cases sensors
+int square = 1;
+int selection = 2;
+
+//auton cases
+int autonRun;
+
+//auton cutoffs
+int cutoffs1[] = {-4096, -2048, 0, 2048, 4096};
+int cutoffs2[] = {-4096, -2048, 0, 2048, 4096};
+
+//auton reading potentionmeters
+int val1 = analogRead[square];
+int val2 = analogRead[selection];
 
 // Allow usage of this file in C++ programs
 #ifdef __cplusplus
