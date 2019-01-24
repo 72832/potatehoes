@@ -32,7 +32,7 @@
 #pragma systemFile
 
 /*---------------------------------------------------------------------------*/
-/*                                                                           */
+/*                                      9                                     */
 /*        Description: Competition template for VEX EDR                      */
 /*                                                                           */
 /*---------------------------------------------------------------------------*/
@@ -119,17 +119,17 @@ task autonomous() {
         auton8();
     } else if (autonRun == 9) {
         auton9();
-    } else if (autonRun == 1) {
+    } else if (autonRun == 10) {
         auton10();
-    } else if (autonRun == 1) {
+    } else if (autonRun == 11) {
         auton11();
-    } else if (autonRun == 1) {
+    } else if (autonRun == 12) {
         auton12();
-    } else if (autonRun == 1) {
+    } else if (autonRun == 13) {
         auton13();
-    } else if (autonRun == 1) {
+    } else if (autonRun == 14) {
         auton14();
-    } else if (autonRun == 1) {
+    } else if (autonRun == 15) {
         auton15();
     } else {
         auton_1();

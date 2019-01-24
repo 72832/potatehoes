@@ -73,6 +73,21 @@ void delayFunc(int time){
 	wait1Msec(time);
 }
 
+void motorRefresh() {
+    right *= -1;
+
+    one = intake;
+    two = left;
+    three = left;
+    four = left;
+    five = right;
+    six = right;
+    seven = right;
+    eight = 0;//unused
+    nine = puncher;
+    ten = intake;
+}
+
 void motorVarSet(){
     motor[port1]=one;
     motor[port2]=two;
@@ -84,19 +99,6 @@ void motorVarSet(){
     motor[port8]=eight;
     motor[port9]=nine;
     motor[port10]=ten;
-}
-
-void motorRefresh() {
-    intake = one;
-    left = two;
-    left = three;
-    left = four;
-    right = five;
-    right = six;
-    right = seven;
-    eight = 0;//unused
-    puncher = nine;
-    intake = ten;
 }
 
 void motorChange(int var, int change = 0, int val = 0) {
@@ -148,7 +150,7 @@ void resetEncoders() {
     SensorValue[rightEncoder] = 0;
 }
 
-void smartMotor() {
+void smrtMtr() {
     // All activities that occur before the competition starts
     // Example: clearing encoders, setting servo positions, ...
     // Enable smart motor library
@@ -176,7 +178,6 @@ void smartMotor() {
 /*********************************************************************/
 /*********************************************************************/
 
-
 void clearLCD() {
     clearLCDLine(0);
     clearLCDLine(1);
@@ -201,7 +202,7 @@ void lcdBattery() {
 }
 
 void init() {
-    smartMotor();
+    smrtMtr();
     resetEncoders();
 }
 
@@ -342,10 +343,9 @@ void auton_1() {
 /*********************************************************************/
 
 void opcontrol(){
-    motorVarSet();
 
-    left=vexRT[Ch2];
-    right=vexRT[Ch3];
+    left = vexRT[Ch3];
+    right = vexRT[Ch2];
 
 // Puncher program
     if (vexRT[Btn6U] == 1) {
@@ -374,5 +374,10 @@ void opcontrol(){
     } else {
         motorChange(intake,0,0);
     }
+
+
     motorRefresh();
+
+    motorVarSet();
+
 }
