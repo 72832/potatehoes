@@ -31,20 +31,6 @@
 /*********************************************************************/
 /*********************************************************************/
 
-/** --------------------- 72832S global functions -------------------*/
-
-/*********************************************************************/
-/*********************************************************************/
-/*********************************************************************/
-
-void delayFunc(int time){
-	wait1Msec(time);
-}
-
-/*********************************************************************/
-/*********************************************************************/
-/*********************************************************************/
-
 /** ------------------- 72832S variable definitions -----------------*/
 
 /*********************************************************************/
@@ -77,11 +63,129 @@ string mainBattery, backupBattery;
 /*********************************************************************/
 /*********************************************************************/
 
+/** --------------------- 72832S global functions -------------------*/
+
+/*********************************************************************/
+/*********************************************************************/
+/*********************************************************************/
+
+void delayFunc(int time){
+	wait1Msec(time);
+}
+
+void motorRefresh() {
+    intake = one;
+    left = two;
+    left = three;
+    left = four;
+    right = five;
+    right = six;
+    right = seven;
+    eight = 0;//unused
+    puncher = nine;
+    intake = ten;
+}
+
+void motorChange(int var, int change = 0, int val = 0) {
+    if (change > 3)
+
+    else
+    if (change < 0)
+
+    else
+    if (change == 0)
+        var = 0;
+    else if (change == 1) {
+        if (val > 127)
+
+        else
+        if (val < -127)
+
+        else
+        {
+            var = val;
+
+        }
+    }
+    if (change == 2) {
+        if (val > 0)
+
+        else
+        if ((var - val) < -127)
+
+        else
+        {
+            var -= val;
+
+        }
+    }
+    if (change == 3) {
+        if (val > 0)
+
+        else
+        if ((var + val) > 127)
+
+        else
+        var += val;
+    }
+}
+
+void resetEncoders() {
+    SensorValue[leftEncoder] = 0;
+    SensorValue[rightEncoder] = 0;
+}
+
+void smartMotor() {
+    // All activities that occur before the competition starts
+    // Example: clearing encoders, setting servo positions, ...
+    // Enable smart motor library
+    SmartMotorsInit();
+
+    // Define motors plugged into power expander
+    // SmartMotorsAddPowerExtender( motorA, motorB, motorC, motorD );
+
+    // Link motors
+    SmartMotorLinkMotors(left1, left2);
+    SmartMotorLinkMotors(right1, right2);
+    // Current monitor
+    SmartMotorCurrentMonitorEnable();
+    // Smart motor start
+    SmartMotorRun();
+}
+
+/*********************************************************************/
+/*********************************************************************/
+/*********************************************************************/
+
 /** ----------------- 72832S initialization functions ---------------*/
 
 /*********************************************************************/
 /*********************************************************************/
 /*********************************************************************/
+
+
+void clearLCD() {
+    clearLCDLine(0);
+    clearLCDLine(1);
+}
+
+//void lcd display voltage
+void lcdBattery() {
+    clearLCD();
+
+    //Display the Primary Robot battery voltage
+    displayLCDString(0, 0, "Primary: ");
+    sprintf(mainBattery, "%1.2f%c", nImmediateBatteryLevel / 1000.0, 'V'); //Build the value to be displayed
+    displayNextLCDString(mainBattery);
+
+    //Display the Backup battery voltage
+    displayLCDString(1, 0, "Backup: ");
+    sprintf(backupBattery, "%1.2f%c", BackupBatteryLevel / 1000.0, 'V');    //Build the value to be displayed
+    displayNextLCDString(backupBattery);
+
+    //Short delay for the LCD refresh rate
+    wait1Msec(100);
+}
 
 void init() {
     smartMotor();
@@ -219,57 +323,6 @@ void auton_1() {
 /*********************************************************************/
 /*********************************************************************/
 /*********************************************************************/
-
-void motorRefresh(){
-    intake=one;
-    left=two;
-    left=three;
-    left=four;
-    right=five;
-    right=six;
-    right=seven;
-    eight=0;//unused
-    puncher=nine;
-    intake=ten;
-}
-
-void motorChange(int var, int change=0, int val=0){
-    if (change > 3)
-        break;
-    else if (change < 0)
-        break;
-    else if (change==0)
-        var = 0;
-    else if(change==1){
-        if (val > 127)
-            break;
-        else if (val < -127)
-            break;
-        else {
-            var = val;
-            break;
-        }
-    }
-    if (change==2){
-        if(val>0)
-            break;
-        else if( (var-val) < -127)
-            break;
-        else {
-            var -= val;
-            break;
-        }
-    }
-    if(change==3){
-        if (val>0)
-            break;
-        else if((var+val)>127)
-            break;
-        else{
-            var+=val;
-        }
-    }
-}
 
 void opcontrol(){
     motorSet();

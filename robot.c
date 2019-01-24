@@ -99,58 +99,40 @@ void pre_auton() {
 /*********************************************************************/
 
 task autonomous() {
-    switch (autonRun) {
-        case autonRun=0:
-            auton0();
-            break;
-        case autonRun=1:
-            auton1();
-            break;
-        case autonRun=2:
-            auton2();
-            break;
-        case autonRun=3:
-            auton3();
-            break;
-        case autonRun=4:
-            auton4();
-            break;
-        case autonRun=5:
-            auton5();
-            break;
-        case autonRun=6:
-            auton6();
-            break;
-        case autonRun=7:
-            auton7();
-            break;
-        case autonRun=8:
-            auton8();
-            break;
-        case autonRun=9:
-            auton9();
-            break;
-        case autonRun=10:
-            auton10();
-            break;
-        case autonRun=11:
-            auton11();
-            break;
-        case autonRun=12:
-            auton12();
-            break;
-        case autonRun=13:
-            auton13();
-            break;
-        case autonRun=14:
-            auton14();
-            break;
-        case autonRun=15:
-            auton15();
-            break;
-        default:
-            auton_1();
-            break;
+    if (autonRun == 0) {
+        auton0();
+    } else if (autonRun == 1) {
+        auton1();
+    } else if (autonRun == 2) {
+        auton2();
+    } else if (autonRun == 3) {
+        auton3();
+    } else if (autonRun == 4) {
+        auton4();
+    } else if (autonRun == 5) {
+        auton5();
+    } else if (autonRun == 6) {
+        auton6();
+    } else if (autonRun == 7) {
+        auton7();
+    } else if (autonRun == 8) {
+        auton8();
+    } else if (autonRun == 9) {
+        auton9();
+    } else if (autonRun == 1) {
+        auton10();
+    } else if (autonRun == 1) {
+        auton11();
+    } else if (autonRun == 1) {
+        auton12();
+    } else if (autonRun == 1) {
+        auton13();
+    } else if (autonRun == 1) {
+        auton14();
+    } else if (autonRun == 1) {
+        auton15();
+    } else {
+        auton_1();
     }
 }
 
