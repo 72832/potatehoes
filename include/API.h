@@ -73,6 +73,19 @@ void delayFunc(int time){
 	wait1Msec(time);
 }
 
+void motorVarSet(){
+    motor[port1]=one;
+    motor[port2]=two;
+    motor[port3]=three;
+    motor[port4]=four;
+    motor[port5]=five;
+    motor[port6]=six;
+    motor[port7]=seven;
+    motor[port8]=eight;
+    motor[port9]=nine;
+    motor[port10]=ten;
+}
+
 void motorRefresh() {
     intake = one;
     left = two;
@@ -249,6 +262,10 @@ void auton() {
 
 }
 
+void auton0() {
+    auton();
+}
+
 void auton1() {
     auton();
 }
@@ -325,7 +342,7 @@ void auton_1() {
 /*********************************************************************/
 
 void opcontrol(){
-    motorSet();
+    motorVarSet();
 
     left=vexRT[Ch2];
     right=vexRT[Ch3];
