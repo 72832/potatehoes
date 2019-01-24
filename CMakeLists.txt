@@ -9,8 +9,6 @@ include_directories()
 
 add_executable(potatoes
         include/API.h
-        include/main.h
-        src/auton.c
-        src/init.c
-        src/opcontrol.c
+        auton.c
+        opcontrol.c
         robot.c)

@@ -31,58 +31,61 @@
 /*********************************************************************/
 /*********************************************************************/
 
-/** ------------------- 72832S opcontrol functions -----------------*/
+/** --------------------- 72832S global functions -------------------*/
 
 /*********************************************************************/
 /*********************************************************************/
 /*********************************************************************/
 
-void smartMotor() {
-    bStopTasksBetweenModes = false;
-
-    // All activities that occur before the competition starts
-    // Example: clearing encoders, setting servo positions, ...
-    // Enable smart motor library
-    SmartMotorsInit();
-
-    // Define motors plugged into power expander
-    // SmartMotorsAddPowerExtender( motorA, motorB, motorC, motorD );
-
-    // Link motors
-    SmartMotorLinkMotors(left1, left2);
-    SmartMotorLinkMotors(right1, right2);
-    // Current monitor
-    SmartMotorCurrentMonitorEnable();
-    // Smart motor start
-    SmartMotorRun();
+void delayFunc(int time){
+	wait1Msec(time);
 }
 
-void clearLCD() {
-    clearLCDLine(0);
-    clearLCDLine(1);
-}
+/*********************************************************************/
+/*********************************************************************/
+/*********************************************************************/
 
-//void lcd display voltage
-void lcdBattery() {
-    clearLCD();
+/** ------------------- 72832S variable definitions -----------------*/
 
-    //Display the Primary Robot battery voltage
-    displayLCDString(0, 0, "Primary: ");
-    sprintf(mainBattery, "%1.2f%c", nImmediateBatteryLevel / 1000.0, 'V'); //Build the value to be displayed
-    displayNextLCDString(mainBattery);
+/*********************************************************************/
+/*********************************************************************/
+/*********************************************************************/
 
-    //Display the Backup battery voltage
-    displayLCDString(1, 0, "Backup: ");
-    sprintf(backupBattery, "%1.2f%c", BackupBatteryLevel / 1000.0, 'V');    //Build the value to be displayed
-    displayNextLCDString(backupBattery);
+int intake;
+int right;
+int left;
+int puncher;
 
-    //Short delay for the LCD refresh rate
-    wait1Msec(100);
-}
+int one;
+int two;
+int three;
+int four;
+int five;
+int six;
+int seven;
+int eight;
+int nine;
+int ten;
 
-void intakeFunc(int power1, int power2) {
-    intake1Func(power1);
-    intake2Func(power2);
+int autonRun;
+
+bool driveReverse = false;
+
+string mainBattery, backupBattery;
+
+/*********************************************************************/
+/*********************************************************************/
+/*********************************************************************/
+
+/** ----------------- 72832S initialization functions ---------------*/
+
+/*********************************************************************/
+/*********************************************************************/
+/*********************************************************************/
+
+void init() {
+    smartMotor();
+    resetEncoders();
 }
 
 /*********************************************************************/
@@ -95,59 +98,25 @@ void intakeFunc(int power1, int power2) {
 /*********************************************************************/
 /*********************************************************************/
 
-/**
- * Auton Placeholder; placeholder for auton
- *
- * @param channel the channel the likelihood of having an paramater
- */
-
 task puncherOn() {
-    while (true) {
-        puncherFunc(127);
-    }
+    while (true)
+        puncher = 127;
 }
-
-/**
- * Auton Placeholder; placeholder for auton
- *
- * @param channel the channel the likelihood of having an paramater
- */
 
 task puncherOff() {
-    while (true) {
-        puncherFunc(0);
-    }
+    while (true)
+        puncher = 0;
 }
-
-/**
- * Auton Placeholder; placeholder for auton
- *
- * @param channel the channel the likelihood of having an paramater
- */
 
 task intakeOn() {
-    while (true) {
-        intakeFunc(127, 127);
-    }
+    while (true)
+        intake = 127;
 }
-
-/**
- * Auton Placeholder; placeholder for auton
- *
- * @param channel the channel the likelihood of having an paramater
- */
 
 task intakeOff() {
-    while (true) {
-        intakeFunc(0, 0);
-    }
+    while (true)
+        intake = 0;
 }
-
-/**
- * Auton Placeholder; placeholder for auton
- *
- * @param channel the channel the likelihood of having an paramater
- */
 
 void punch() {
 
@@ -159,162 +128,181 @@ void punch() {
     stopTask(puncherOff);
 }
 
-/**
- * Auton Placeholder; placeholder for auton
- *
- * @param channel the channel the likelihood of having an paramater
- */
+//auton
+void auton() {
+
+    //1200 from place to flag or to alliance park
+    //2000 from place to center
+    punch();
+
+    //intake on
+    startTask(intakeOn);
+
+    //intake stop
+    stopTask(intakeOn);
+    startTask(intakeOff);
+    stopTask(intakeOff);
+
+}
 
 void auton1() {
-    punch();
+    auton();
 }
-
-/**
- * Auton Placeholder; placeholder for auton
- *
- * @param channel the channel the likelihood of having an paramater
- */
 
 void auton2() {
-    punch();
+    auton();
 }
-
-/**
- * Auton Placeholder; placeholder for auton
- *
- * @param channel the channel the likelihood of having an paramater
- */
 
 void auton3() {
-    punch();
+    auton();
 }
-
-/**
- * Auton Placeholder; placeholder for auton
- *
- * @param channel the channel the likelihood of having an paramater
- */
 
 void auton4() {
-    punch();
+    auton();
 }
-
-/**
- * Auton Placeholder; placeholder for auton
- *
- * @param channel the channel the likelihood of having an paramater
- */
 
 void auton5() {
-    punch();
+    auton();
 }
-
-/**
- * Auton Placeholder; placeholder for auton
- *
- * @param channel the channel the likelihood of having an paramater
- */
 
 void auton6() {
-    punch();
+    auton();
 }
-
-/**
- * Auton Placeholder; placeholder for auton
- *
- * @param channel the channel the likelihood of having an paramater
- */
 
 void auton7() {
-    punch();
+    auton();
 }
-
-/**
- * Auton Placeholder; placeholder for auton
- *
- * @param channel the channel the likelihood of having an paramater
- */
 
 void auton8() {
-    punch();
+    auton();
 }
-
-/**
- * Auton Placeholder; placeholder for auton
- *
- * @param channel the channel the likelihood of having an paramater
- */
 
 void auton9() {
-    punch();
+    auton();
 }
-
-/**
- * Auton Placeholder; placeholder for auton
- *
- * @param channel the channel the likelihood of having an paramater
- */
 
 void auton10() {
-    punch();
+    auton();
 }
-
-/**
- * Auton Placeholder; placeholder for auton
- *
- * @param channel the channel the likelihood of having an paramater
- */
 
 void auton11() {
-    punch();
+    auton();
 }
-
-/**
- * Auton Placeholder; placeholder for auton
- *
- * @param channel the channel the likelihood of having an paramater
- */
 
 void auton12() {
-    punch();
+    auton();
 }
-
-/**
- * Auton Placeholder; placeholder for auton
- *
- * @param channel the channel the likelihood of having an paramater
- */
 
 void auton13() {
-    punch();
+    auton();
 }
-
-/**
- * Auton Placeholder; placeholder for auton
- *
- * @param channel the channel the likelihood of having an paramater
- */
 
 void auton14() {
-    punch();
+    auton();
 }
-
-/**
- * Auton Placeholder; placeholder for auton
- *
- * @param channel the channel the likelihood of having an paramater
- */
 
 void auton15() {
-    punch();
+    auton();
 }
 
-/**
- * Auton Placeholder; placeholder for auton
- *
- * @param channel the channel the likelihood of having an paramater
- */
-
 void auton_1() {
-    punch();
+    auton();
+}
+
+
+/*********************************************************************/
+/*********************************************************************/
+/*********************************************************************/
+
+/** ------------------- 72832S opcontrol functions -----------------*/
+
+/*********************************************************************/
+/*********************************************************************/
+/*********************************************************************/
+
+void motorRefresh(){
+    intake=one;
+    left=two;
+    left=three;
+    left=four;
+    right=five;
+    right=six;
+    right=seven;
+    eight=0;//unused
+    puncher=nine;
+    intake=ten;
+}
+
+void motorChange(int var, int change=0, int val=0){
+    if (change > 3)
+        break;
+    else if (change < 0)
+        break;
+    else if (change==0)
+        var = 0;
+    else if(change==1){
+        if (val > 127)
+            break;
+        else if (val < -127)
+            break;
+        else {
+            var = val;
+            break;
+        }
+    }
+    if (change==2){
+        if(val>0)
+            break;
+        else if( (var-val) < -127)
+            break;
+        else {
+            var -= val;
+            break;
+        }
+    }
+    if(change==3){
+        if (val>0)
+            break;
+        else if((var+val)>127)
+            break;
+        else{
+            var+=val;
+        }
+    }
+}
+
+void opcontrol(){
+    motorSet();
+
+    left=vexRT[Ch2];
+    right=vexRT[Ch3];
+
+// Puncher program
+    if (vexRT[Btn6U] == 1) {
+        motorChange(puncher,1,127);
+    } else {
+        motorChange(puncher,0,0);
+    }
+
+//reverse drive so that you can easily flip caps (find in functions)
+    if (vexRT[Btn8D] == 1) {
+        if (!driveReverse) {waitUntil(vexRT[Btn8D]== 0);
+            driveReverse = true;
+            delayFunc(500);
+        } else if (driveReverse) {
+            waitUntil(vexRT[Btn8D]== 0);
+            driveReverse = false;
+            delayFunc(500);
+        }
+    }
+
+// Intake program
+    if (vexRT[Btn5U] == 1) {
+        motorChange(intake,1,127);
+    } else if (vexRT[Btn6D] == 1) {
+        motorChange(intake,1,-127);
+    } else {
+        motorChange(intake,0,0);
+    }
+    motorRefresh();
 }
