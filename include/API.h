@@ -256,6 +256,13 @@ void auton() {
     //intake on
     startTask(intakeOn);
 
+    while(leftEncoder<=1100) {
+        if (left <= 90) {
+            motorChange(left, 3, 5);
+            motorChange(right, 3, 5);
+        }
+    }
+
     //intake stop
     stopTask(intakeOn);
     startTask(intakeOff);
