@@ -1,5 +1,5 @@
-#pragma config(Sensor, in3,    autonPotent,    sensorPotentiometer)
-#pragma config(Sensor, in4,    ballIntake,     sensorLineFollower)
+#pragma config(Sensor, in1,    posPotent,      sensorPotentiometer)
+#pragma config(Sensor, in2,    progPotent,     sensorPotentiometer)
 #pragma config(Sensor, dgtl1,  rightEncoder,   sensorQuadEncoder)
 #pragma config(Sensor, dgtl3,  leftEncoder,    sensorQuadEncoder)
 #pragma config(Motor,  port1,           intake1,       tmotorVex393TurboSpeed_HBridge, openLoop)
@@ -99,6 +99,7 @@ void pre_auton() {
 /*********************************************************************/
 
 task autonomous() {
+
     if (autonRun == 0) {
         auton0();
     } else if (autonRun == 1) {
