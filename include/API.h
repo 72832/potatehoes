@@ -57,7 +57,6 @@ int autonRun;
 
 //auton cutoffs
 int cutoffs[] = {-4096, -2048, 0, 2048, 4096};
-int cutoffs2[] = {-4096, -2048, 0, 2048, 4096};
 
 //auton reading potentionmeters
 int val1 = SensorValue[posPotent];
@@ -181,8 +180,31 @@ void resetEncoders() {
 /*********************************************************************/
 /*********************************************************************/
 
+void clearLCD() {
+    clearLCDLine(0);
+    clearLCDLine(1);
+}
 
-//auton menu
+//void lcd display voltage
+void lcdBattery() {
+    clearLCD();
+
+    //Display the Primary Robot battery voltage
+    displayLCDString(0, 0, "Primary: ");
+    sprintf(mainBattery, "%12f%c", nImmediateBatteryLevel / 10000, 'V'); //Build the value to be displayed
+    displayNextLCDString(mainBattery);
+
+    //Display the Backup battery voltage
+    displayLCDString(1, 0, "Backup: ");
+    sprintf(backupBattery, "%12f%c", BackupBatteryLevel / 10000, 'V');    //Build the value to be displayed
+    displayNextLCDString(backupBattery);
+
+    //Short delay for the LCD refresh rate
+    wait1Msec(100);
+}
+
+void init() {
+	//auton menu
 if (val1 >= cutoffs[0] && val1 < cutoffs[1]) {
     if (val2 >= cutoffs[0] && val2 < cutoffs[1])
         autonRun = 0;
@@ -219,34 +241,9 @@ if (val1 >= cutoffs[0] && val1 < cutoffs[1]) {
         autonRun = 14;
     else if (val2 >= cutoffs[3] && val2 < cutoffs[4])
         autonRun = 15;
-} else {
+}else{
     autonRun = -1;
 }
-
-void clearLCD() {
-    clearLCDLine(0);
-    clearLCDLine(1);
-}
-
-//void lcd display voltage
-void lcdBattery() {
-    clearLCD();
-
-    //Display the Primary Robot battery voltage
-    displayLCDString(0, 0, "Primary: ");
-    sprintf(mainBattery, "%12f%c", nImmediateBatteryLevel / 10000, 'V'); //Build the value to be displayed
-    displayNextLCDString(mainBattery);
-
-    //Display the Backup battery voltage
-    displayLCDString(1, 0, "Backup: ");
-    sprintf(backupBattery, "%12f%c", BackupBatteryLevel / 10000, 'V');    //Build the value to be displayed
-    displayNextLCDString(backupBattery);
-
-    //Short delay for the LCD refresh rate
-    wait1Msec(100);
-}
-
-void init() {
     resetEncoders();
 }
 
