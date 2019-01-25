@@ -80,7 +80,7 @@ void robotType(tRobotType type = none)
   }
 
   // SENSORS (for all robots - 'none'):
-  if(type != 0)
+  if(1)
   {
 	  if(SensorType[in1] == sensorNone)
 	  {
