@@ -1,5 +1,5 @@
 //
-// Created by jonesdav004 on 1/23/2019.
+// Created by jonesdav004 on 1/23/2019
 //
 
 #ifndef POTATOES_API_H
@@ -7,24 +7,24 @@
 
 #endif //POTATOES_API_H
 
-/** @file API.h
+/** @file APIh
  * @brief Provides the high-level user functionality intended for use by typical VEX Cortex
- * programmers.
+ * programmers
  *
  * This file should be included for you in the predefined stubs in each new VEX Cortex PROS
- * project through the inclusion of "main.h". In any new C source file, it is advisable to
- * include main.h instead of referencing API.h by name, to better handle any nomenclature
- * changes to this file or its contents.
+ * project through the inclusion of "mainh" In any new C source file, it is advisable to
+ * include mainh instead of referencing APIh by name, to better handle any nomenclature
+ * changes to this file or its contents
  *
- * Copyright (c) 2011-2018, Purdue University ACM SIGBots.
- * All rights reserved.
+ * Copyright (c) 2011-2018, Purdue University ACM SIGBots
+ * All rights reserved
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ * License, v 20 If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozillaorg/MPL/20/
  *
- * PROS contains FreeRTOS (http://www.freertos.org) whose source code may be
- * obtained from http://sourceforge.net/projects/freertos/files/ or on request.
+ * PROS contains FreeRTOS (http://wwwfreertosorg) whose source code may be
+ * obtained from http://sourceforgenet/projects/freertos/files/ or on request
  */
 
 /*********************************************************************/
@@ -55,9 +55,29 @@ int ten;
 
 int autonRun;
 
+//auton cutoffs
+int cutoffs[] = {-4096, -2048, 0, 2048, 4096};
+
+//auton reading potentionmeters
+int val1 = SensorValue[posPotent];
+int val2 = SensorValue[progPotent];
+
 bool driveReverse = false;
 
 string mainBattery, backupBattery;
+
+int leftEnc=SensorValue[leftEncoder]*-1;
+int rightEnc=SensorValue[rightEncoder];
+
+int give=45;
+
+int maxVal=127;
+int minVal=-127;
+
+int zeroed=0;
+int equals=1;
+int minus=2;
+int plus=3;
 
 /*********************************************************************/
 /*********************************************************************/
@@ -111,10 +131,10 @@ void motorChange(int var, int change = 0, int val = 0) {
     if (change == 0)
         var = 0;
     else if (change == 1) {
-        if (val > 127)
+        if (val > maxVal)
 
         else
-        if (val < -127)
+        if (val < minVal)
 
         else
         {
@@ -126,7 +146,7 @@ void motorChange(int var, int change = 0, int val = 0) {
         if (val > 0)
 
         else
-        if ((var - val) < -127)
+        if ((var - val) < minVal)
 
         else
         {
@@ -138,7 +158,7 @@ void motorChange(int var, int change = 0, int val = 0) {
         if (val > 0)
 
         else
-        if ((var + val) > 127)
+        if ((var + val) > maxVal)
 
         else
         var += val;
@@ -148,24 +168,6 @@ void motorChange(int var, int change = 0, int val = 0) {
 void resetEncoders() {
     SensorValue[leftEncoder] = 0;
     SensorValue[rightEncoder] = 0;
-}
-
-void smrtMtr() {
-    // All activities that occur before the competition starts
-    // Example: clearing encoders, setting servo positions, ...
-    // Enable smart motor library
-    SmartMotorsInit();
-
-    // Define motors plugged into power expander
-    // SmartMotorsAddPowerExtender( motorA, motorB, motorC, motorD );
-
-    // Link motors
-    SmartMotorLinkMotors(left1, left2);
-    SmartMotorLinkMotors(right1, right2);
-    // Current monitor
-    SmartMotorCurrentMonitorEnable();
-    // Smart motor start
-    SmartMotorRun();
 }
 
 /*********************************************************************/
@@ -189,12 +191,12 @@ void lcdBattery() {
 
     //Display the Primary Robot battery voltage
     displayLCDString(0, 0, "Primary: ");
-    sprintf(mainBattery, "%1.2f%c", nImmediateBatteryLevel / 1000.0, 'V'); //Build the value to be displayed
+    sprintf(mainBattery, "%12f%c", nImmediateBatteryLevel / 10000, 'V'); //Build the value to be displayed
     displayNextLCDString(mainBattery);
 
     //Display the Backup battery voltage
     displayLCDString(1, 0, "Backup: ");
-    sprintf(backupBattery, "%1.2f%c", BackupBatteryLevel / 1000.0, 'V');    //Build the value to be displayed
+    sprintf(backupBattery, "%12f%c", BackupBatteryLevel / 10000, 'V');    //Build the value to be displayed
     displayNextLCDString(backupBattery);
 
     //Short delay for the LCD refresh rate
@@ -202,7 +204,46 @@ void lcdBattery() {
 }
 
 void init() {
-    smrtMtr();
+	//auton menu
+if (val1 >= cutoffs[0] && val1 < cutoffs[1]) {
+    if (val2 >= cutoffs[0] && val2 < cutoffs[1])
+        autonRun = 0;
+    else if (val2 >= cutoffs[1] && val2 < cutoffs[2])
+        autonRun = 1;
+    else if (val2 >= cutoffs[2] && val2 < cutoffs[3])
+        autonRun = 2;
+    else if (val2 >= cutoffs[3] && val2 < cutoffs[4])
+        autonRun = 3;
+} else if (val1 >= cutoffs[1] && val1 < cutoffs[2]) {
+    if (val2 >= cutoffs[0] && val2 < cutoffs[1])
+        autonRun = 4;
+    else if (val2 >= cutoffs[1] && val2 < cutoffs[2])
+        autonRun = 5;
+    else if (val2 >= cutoffs[2] && val2 < cutoffs[3])
+        autonRun = 6;
+    else if (val2 >= cutoffs[3] && val2 < cutoffs[4])
+        autonRun = 7;
+} else if (val1 >= cutoffs[2] && val1 < cutoffs[3]) {
+    if (val2 >= cutoffs[0] && val2 < cutoffs[1])
+        autonRun = 8;
+    else if (val2 >= cutoffs[1] && val2 < cutoffs[2])
+        autonRun = 9;
+    else if (val2 >= cutoffs[2] && val2 < cutoffs[3])
+        autonRun = 10;
+    else if (val2 >= cutoffs[3] && val2 < cutoffs[4])
+        autonRun = 11;
+} else if (val1 >= cutoffs[3] && val1 < cutoffs[4]) {
+    if (val2 >= cutoffs[0] && val2 < cutoffs[1])
+        autonRun = 12;
+    else if (val2 >= cutoffs[1] && val2 < cutoffs[2])
+        autonRun = 13;
+    else if (val2 >= cutoffs[2] && val2 < cutoffs[3])
+        autonRun = 14;
+    else if (val2 >= cutoffs[3] && val2 < cutoffs[4])
+        autonRun = 15;
+}else{
+    autonRun = -1;
+}
     resetEncoders();
 }
 
@@ -246,8 +287,53 @@ void punch() {
     stopTask(puncherOff);
 }
 
+void striaghtForward(int modifier){
+    if(leftEnc-give>rightEnc){
+        motorChange(left,minus,modifier);
+    }else if(leftEnc<rightEnc-give){
+        motorChange(right,minus,modifier);
+    }else if((-give<rightEnc-leftEnc) && (rightEnc-leftEnc<give)){
+        motorChange(left,equals,minVal);
+        motorChange(right,equals,minVal);
+    }
+}
+
+void straightBackward(int modifier){
+    if(leftEnc-give>rightEnc){
+        motorChange(left,plus,modifier);
+    }else if(leftEnc<rightEnc-give){
+        motorChange(right,plus,modifier);
+    }else if(-give<rightEnc-leftEnc && rightEnc-leftEnc<give){
+        motorChange(left,equals,minVal);
+        motorChange(right,equals,minVal);
+    }
+}
+
+void reqValueStraight(int val){
+    int diff=val-leftEnc;
+    int diffNeg=val+leftEnc;
+    if(val>0){
+        if(diff >=1800){
+            striaghtForward(15);
+            maxVal=90;
+        }else if(diff>=360){
+            straightForward(3);
+            maxVal=60;
+        }
+    }
+    else if(val<0){
+        if(diffNeg <=-1800){
+            straightBackward(15);
+            maxVal=90;
+        }else if(diffNeg<=-360){
+            straightBackward(3);
+            maxVal=60;
+        }
+    }
+}
+
 //auton
-void auton() {
+void autonFront() {
 
     //1200 from place to flag or to alliance park
     //2000 from place to center
@@ -256,12 +342,7 @@ void auton() {
     //intake on
     startTask(intakeOn);
 
-    while(leftEncoder<=1100) {
-        if (left <= 90) {
-            motorChange(left, 3, 5);
-            motorChange(right, 3, 5);
-        }
-    }
+    reqValueStraight(1100);
 
     //intake stop
     stopTask(intakeOn);
@@ -270,72 +351,81 @@ void auton() {
 
 }
 
-void auton0() {
+//auton
+void autonBack() {
+
+    //intake on
+    startTask(intakeOn);
+
+    reqValueStraight(1100);
+
+    //intake stop
+    stopTask(intakeOn);
+    startTask(intakeOff);
+    stopTask(intakeOff);
+
+}
+
+void autonRedFrontFirst() {
     auton();
 }
 
-void auton1() {
+void autonRedBackFirst{
+    autonBack();
+}
+
+void autonBlueFrontFirst{
     auton();
 }
 
-void auton2() {
+void autonBlueBackFirst{
     auton();
 }
 
-void auton3() {
+void autonRedFrontSecond() {
     auton();
 }
 
-void auton4() {
+void autonRedBackSecond{
+auton();
+}
+
+void autonBlueFrontSecond{
+auton();
+}
+
+void autonBlueBackSecond{
+auton();
+}
+void autonRedFrontThird() {
     auton();
 }
 
-void auton5() {
+void autonRedBackThird{
+auton();
+}
+
+void autonBlueFrontThird{
+auton();
+}
+
+void autonBlueBackThird{
+auton();
+}
+void autonRedFrontFourth() {
     auton();
 }
 
-void auton6() {
-    auton();
+void autonRedBackFourth{
+auton();
 }
 
-void auton7() {
-    auton();
+void autonBlueFrontFourth{
+auton();
 }
 
-void auton8() {
-    auton();
-}
-
-void auton9() {
-    auton();
-}
-
-void auton10() {
-    auton();
-}
-
-void auton11() {
-    auton();
-}
-
-void auton12() {
-    auton();
-}
-
-void auton13() {
-    auton();
-}
-
-void auton14() {
-    auton();
-}
-
-void auton15() {
-    auton();
-}
-
-void auton_1() {
-    auton();
+void autonBlueBackFourth{
+auton();
 }
 
 
