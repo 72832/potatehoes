@@ -69,15 +69,8 @@ string mainBattery, backupBattery;
 int leftEnc=SensorValue[leftEncoder]*-1;
 int rightEnc=SensorValue[rightEncoder];
 
-int give=45;
-
 int maxVal=127;
 int minVal=-127;
-
-int zeroed=0;
-int equals=1;
-int minus=2;
-int plus=3;
 
 /*********************************************************************/
 /*********************************************************************/
@@ -100,24 +93,24 @@ void motorRefresh() {
     two = left;
     three = left;
     four = left;
-    five = right;
-    six = right;
+    five = puncher;
+    six = 0;//unused
     seven = right;
-    eight = 0;//unused
-    nine = puncher;
+    eight = right;
+    nine = right;
     ten = intake;
 }
 
 void motorVarSet(){
     motor[port1]=one;
-    motor[port2]=two;
-    motor[port3]=three;
-    motor[port4]=four;
+    SetMotor(2,two);
+    SetMotor(3,three);
+    SetMotor(4,four);
     motor[port5]=five;
     motor[port6]=six;
-    motor[port7]=seven;
-    motor[port8]=eight;
-    motor[port9]=nine;
+    SetMotor(7,seven);
+    SetMotor(8,eight);
+    SetMotor(9,nine);
     motor[port10]=ten;
 }
 
@@ -245,6 +238,8 @@ if (val1 >= cutoffs[0] && val1 < cutoffs[1]) {
     autonRun = -1;
 }
     resetEncoders();
+    SmartMotorsInit();
+    SmartMotorRun();
 }
 
 /*********************************************************************/
@@ -287,147 +282,10 @@ void punch() {
     stopTask(puncherOff);
 }
 
-void striaghtForward(int modifier){
-    if(leftEnc-give>rightEnc){
-        motorChange(left,minus,modifier);
-    }else if(leftEnc<rightEnc-give){
-        motorChange(right,minus,modifier);
-    }else if((-give<rightEnc-leftEnc) && (rightEnc-leftEnc<give)){
-        motorChange(left,equals,minVal);
-        motorChange(right,equals,minVal);
-    }
-}
-
-void straightBackward(int modifier){
-    if(leftEnc-give>rightEnc){
-        motorChange(left,plus,modifier);
-    }else if(leftEnc<rightEnc-give){
-        motorChange(right,plus,modifier);
-    }else if(-give<rightEnc-leftEnc && rightEnc-leftEnc<give){
-        motorChange(left,equals,minVal);
-        motorChange(right,equals,minVal);
-    }
-}
-
-void reqValueStraight(int val){
-    int diff=val-leftEnc;
-    int diffNeg=val+leftEnc;
-    if(val>0){
-        if(diff >=1800){
-            striaghtForward(15);
-            maxVal=90;
-        }else if(diff>=360){
-            straightForward(3);
-            maxVal=60;
-        }
-    }
-    else if(val<0){
-        if(diffNeg <=-1800){
-            straightBackward(15);
-            maxVal=90;
-        }else if(diffNeg<=-360){
-            straightBackward(3);
-            maxVal=60;
-        }
-    }
-}
-
-//auton
-void autonFront() {
-
-    //1200 from place to flag or to alliance park
-    //2000 from place to center
+void auton(){
     punch();
-
-    //intake on
-    startTask(intakeOn);
-
-    reqValueStraight(1100);
-
-    //intake stop
-    stopTask(intakeOn);
-    startTask(intakeOff);
-    stopTask(intakeOff);
-
+    startTask(intakeOn);  
 }
-
-//auton
-void autonBack() {
-
-    //intake on
-    startTask(intakeOn);
-
-    reqValueStraight(1100);
-
-    //intake stop
-    stopTask(intakeOn);
-    startTask(intakeOff);
-    stopTask(intakeOff);
-
-}
-
-void autonRedFrontFirst() {
-    auton();
-}
-
-void autonRedBackFirst{
-    autonBack();
-}
-
-void autonBlueFrontFirst{
-    auton();
-}
-
-void autonBlueBackFirst{
-    auton();
-}
-
-void autonRedFrontSecond() {
-    auton();
-}
-
-void autonRedBackSecond{
-auton();
-}
-
-void autonBlueFrontSecond{
-auton();
-}
-
-void autonBlueBackSecond{
-auton();
-}
-void autonRedFrontThird() {
-    auton();
-}
-
-void autonRedBackThird{
-auton();
-}
-
-void autonBlueFrontThird{
-auton();
-}
-
-void autonBlueBackThird{
-auton();
-}
-void autonRedFrontFourth() {
-    auton();
-}
-
-void autonRedBackFourth{
-auton();
-}
-
-void autonBlueFrontFourth{
-auton();
-}
-
-void autonBlueBackFourth{
-auton();
-}
-
 
 /*********************************************************************/
 /*********************************************************************/
@@ -476,5 +334,4 @@ void opcontrol(){
     motorRefresh();
 
     motorVarSet();
-
 }
