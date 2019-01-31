@@ -78,19 +78,14 @@ bool driveReverse = false;
 
 string mainBattery, backupBattery;
 
-int leftEnc=SensorValue[leftEncoder]*-1;
-int rightEnc=SensorValue[rightEncoder];
+bool pidRunning=false;
 
-int maxVal=127;
-int minVal=-127;
+float pidRequestedValue;
 
-<<<<<<< HEAD
-int equals=1;
-int minus=2;
-int plus=3;
+float pid_Kp=0;
+float pid_Ki=0;
+float pid_Kd=0;
 
-=======
->>>>>>> 6c14ead3db44d726cd505c5b4d416a9f831fd04e
 /*********************************************************************/
 /*********************************************************************/
 /*********************************************************************/
@@ -123,35 +118,18 @@ void motorVarSet(){
     motorRefresh();
 
     motor[port1]=one;
-<<<<<<< HEAD
     motor[port2]=left;
     motor[port3]=three;
     motor[port4]=four;
-=======
     SetMotor(2,two);
     SetMotor(3,three);
     SetMotor(4,four);
->>>>>>> 6c14ead3db44d726cd505c5b4d416a9f831fd04e
     motor[port5]=five;
     motor[port6]=six;
     SetMotor(7,seven);
     SetMotor(8,eight);
     SetMotor(9,nine);
     motor[port10]=ten;
-}
-
-void motorChange(int var, int change = 0, int val = 0) {
-    if (change == 0)
-        var = 0;
-    else if (change == 1) {
-        var = val;
-    }
-    if (change == 2) {
-        var -= val;
-    }
-    if (change == 3) {
-        var += val;
-    }
 }
 
 void resetEncoders() {
@@ -240,7 +218,6 @@ if (val1 >= cutoffs[0] && val1 < cutoffs[1]) {
         autonProg = 3;
 }
     resetEncoders();
-<<<<<<< HEAD
     // Set bStopTasksBetweenModes to false if you want to keep
    // user created tasks running between Autonomous and Driver
    // controlled modes. You will need to manage all user created
@@ -259,10 +236,8 @@ if (val1 >= cutoffs[0] && val1 < cutoffs[1]) {
 
    // Run smart motors
    SmartMotorRun();
-=======
     SmartMotorsInit();
     SmartMotorRun();
->>>>>>> 6c14ead3db44d726cd505c5b4d416a9f831fd04e
 }
 
 /*********************************************************************/
@@ -275,187 +250,6 @@ if (val1 >= cutoffs[0] && val1 < cutoffs[1]) {
 /*********************************************************************/
 /*********************************************************************/
 
-task posPID(){
-
- float  pidSensorCurrentValue;
- float  pidError;
- float  pidLastError;
- float  pidIntegral;
- float  pidDerivative;
- float  pidDrive;
-
- // If we are using an encoder then clear it
- if(SensorType[rightEncoder] == sensorQuadEncoder )
-   SensorValue[ rightEncoder ] = 0;
-
-  	// Init the variables - thanks Glenn :)
-  pidLastError  = 0;
-  pidIntegral   = 0;
-
-  while( true ){
-    // Is PID control active ?
-    if( pidRunning ){
-      // Read the sensor value and scale
-      pidSensorCurrentValue = SensorValue[ rightEncoder ] * 1;
-
-      // calculate error
-      pidError = pidSensorCurrentValue - pidRequestedValue;
-
-      // integral - if Ki is not 0
-      if( pid_Ki != 0 ){
-        // If we are inside controlable window then integrate the error
-        if( abs(pidError) < 50 )
-          pidIntegral = pidIntegral + pidError;
-        else
-          pidIntegral = 0;
-        }
-      else
-        pidIntegral = 0;
-
-        // calculate the derivative
-        pidDerivative = pidError - pidLastError;
-        pidLastError  = pidError;
-
-        // calculate drive
-        pidDrive = (pid_Kp * pidError) + (pid_Ki * pidIntegral) + (pid_Kd * pidDerivative);
-
-        // limit drive
-        if( pidDrive > 90 )
-          pidDrive = 90;
-        if( pidDrive < -90 )
-          pidDrive = -90;
-
-            // send to motor
-           	driveFunc(pidDrive, pidDrive);
-    }else{
-       // clear all
-       pidError      = 0;
-       pidLastError  = 0;
-       pidIntegral   = 0;
-       pidDerivative = 0;
-       driveFunc(0,0);
-     }
-
-    // Run at 50Hz
-    wait1Msec( 25 );
-  }
-}
-
-/*-----------------------------------------------------------------------------*/
-/*
-*/
-/*  main task
-*/
-/*
-*/
-/*-----------------------------------------------------------------------------*/
-
-void rightDrivePID(int clicks){
-	// send the motor off somewhere
-  pidRequestedValue = clicks;
-	// start the PID task
-  startTask( rightPIDController );
-
-  // use joystick to modify the requested position
-  while( true ){
-  	// maximum change for pidRequestedValue will be 127/4*20, around 640 counts per second
-  	// free spinning motor is 100rmp so 1.67 rotations per second
-		// 1.67 * 360 counts is 600
-
-  	wait1Msec(50);
-  }
-}
-
-task intakeOnTask() {
-    while (true)
-        motor[intake2]=127;
-}
-
-task intakeOffTask() {
-    while (true)
-        motor[intake2]=0;
-}
-
-void intakeOn(){
-    startTask(intakeOnTask);
-}
-
-void intakeOff(){
-    stopTask(intakeOnTask);
-    startTask(intakeOffTask);
-    stopTask(intakeOffTask);
-}
-
-task puncherOnTask() {
-    while (true)
-        motor[puncher]=127;
-}
-
-task puncherOffTask() {
-    while (true)
-        motor[puncher]=0;
-}
-
-void punch() {
-
-    //puncher on
-    startTask(puncherOnTask);
-    delayFunc(2000);
-    stopTask(puncherOnTask);
-    startTask(puncherOffTask);
-    stopTask(puncherOffTask);
-}
-
-<<<<<<< HEAD
-void straightForward(int modifier){
-    if(leftEnc-give>rightEnc){
-        motorChange(left,minus,modifier);
-    }else if(leftEnc<rightEnc-give){
-        motorChange(right,minus,modifier);
-    }else if((-give<rightEnc-leftEnc) && (rightEnc-leftEnc<give)){
-        motorChange(left,equals,minVal);
-        motorChange(right,equals,minVal);
-    }
-}
-
-void straightBackward(int modifier){
-    if(leftEnc-give>rightEnc){
-        motorChange(left,plus,modifier);
-    }else if(leftEnc<rightEnc-give){
-        motorChange(right,plus,modifier);
-    }else if(-give<rightEnc-leftEnc && rightEnc-leftEnc<give){
-        motorChange(left,equals,minVal);
-        motorChange(right,equals,minVal);
-    }
-}
-
-void reqValueStraight(int val){
-    int diff=val-leftEnc;
-    int diffNeg=val+leftEnc;
-    if(val>0){
-        if(diff >=1800){
-            straightForward(15);
-            maxVal=90;
-        }else if(diff>=360){
-            straightForward(3);
-            maxVal=60;
-        }
-    }
-    else if(val<0){
-        if(diffNeg <=-1800){
-            straightBackward(15);
-            maxVal=90;
-        }else if(diffNeg<=-360){
-            straightBackward(3);
-            maxVal=60;
-        }
-    }
-}
-
-void auton(){
-    delayFunc(100);
-}
-=======
 // PID using optical shaft encoder
 //
 // Shaft encoder has 360 pulses per revolution
@@ -469,12 +263,6 @@ void auton(){
 
 // These could be constants but leaving
 // as variables allows them to be modified in the debugger "live"
-float  pid_Kp = 2.0;
-float  pid_Ki = 0.0;
-float  pid_Kd = 0.0;
-
-static int   pidRunning = 1;
-static float pidRequestedValue;
 
 /*-----------------------------------------------------------------------------*/
 /*                                                                             */
@@ -571,12 +359,6 @@ task pidPos()
         }
 }
 
-/*-----------------------------------------------------------------------------*/
-/*                                                                             */
-/*  main task                                                                  */
-/*                                                                             */
-/*-----------------------------------------------------------------------------*/
-
 void pidPosReq(int val)
 {
     // send the motor off somewhere
@@ -599,14 +381,53 @@ void pidPosReq(int val)
 
 }
 
-void auton(){
-    punch();
-    startTask(intakeOn);
-    pidPosReq(1100);
-
+task intakeOnTask() {
+    while (true)
+        motor[intake2]=127;
 }
 
->>>>>>> 6c14ead3db44d726cd505c5b4d416a9f831fd04e
+task intakeOffTask() {
+    while (true)
+        motor[intake2]=0;
+}
+
+void intakeOn(){
+    startTask(intakeOnTask);
+}
+
+void intakeOff(){
+    stopTask(intakeOnTask);
+    startTask(intakeOffTask);
+    stopTask(intakeOffTask);
+}
+
+task puncherOnTask() {
+    while (true)
+        motor[puncher]=127;
+}
+
+task puncherOffTask() {
+    while (true)
+        motor[puncher]=0;
+}
+
+void punch() {
+
+    //puncher on
+    startTask(puncherOnTask);
+    delayFunc(2000);
+    stopTask(puncherOnTask);
+    startTask(puncherOffTask);
+    stopTask(puncherOffTask);
+}
+
+void auton(){
+    punch();
+    intakeOn();
+    pidPosReq(1100);
+    intakeOff();
+}
+
 /*********************************************************************/
 /*********************************************************************/
 /*********************************************************************/
@@ -617,21 +438,41 @@ void auton(){
 /*********************************************************************/
 /*********************************************************************/
 
+void driveFunc(int power1,int power2){
+    SetMotor(left1,power1*-1);
+	SetMotor(left2,power1*-1);
+    SetMotor(left3,power1*-1);
+
+    SetMotor(right1,power2);
+    SetMotor(right2,power2);
+	SetMotor(right3,power2);
+}
+
+void drive(){
+    if(driveReverse){
+        driveFunc(vexRT[Ch3],vexRT[Ch2]);
+    }else if(!driveReverse){
+        driveFunc(vexRT[Ch2]*-1,vexRT[Ch2*-1]);
+    }
+}
+
 void opcontrol(){
-		if(vexRT[Btn5D]==1){
-			motor[intake2]=127;
-		}else if(vexRT[Btn5U]==1){
-			motor[intake2]=-127;
+    drive();
+
+	if(vexRT[Btn5D]==1){
+		motor[intake2]=127;
+	}else if(vexRT[Btn5U]==1){
+		motor[intake2]=-127;
     }else{
-			motor[intake2]=0;
+		motor[intake2]=0;
     }
 
 	if(vexRT[Btn6U]==1){
 		motor[puncherMain]=127;
     }else if( vexRT[Btn6D]==1){
-			motor[puncherMain]=-127;
+		motor[puncherMain]=-127;
     }else{
-			motor[puncherMain]=0;
+		motor[puncherMain]=0;
     }
 
     if(vexRT[Btn7D]==1){
@@ -644,22 +485,16 @@ void opcontrol(){
         stopTask(autonomous);
         waitUntil(vexRT[Btn7U]==0);
     }
+
     if(vexRT[Btn7R]==1){
         auton();
     }
 
-<<<<<<< HEAD
-    SetMotor(left1,vexRT[Ch3]*-1);
-	SetMotor(left2,vexRT[Ch3]*-1);
-	SetMotor(left3,vexRT[Ch3]*-1);
+    if(vexRT[Btn8D]==1){
+        driveReverse=!driveReverse;
+    }
 
-    SetMotor(right1,vexRT[Ch2]);
-    SetMotor(right2,vexRT[Ch2]);
-	SetMotor(right3,vexRT[Ch2]);
-}
-=======
     motorRefresh();
 
     motorVarSet();
 }
->>>>>>> 6c14ead3db44d726cd505c5b4d416a9f831fd04e
