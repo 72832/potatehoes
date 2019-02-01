@@ -37,22 +37,6 @@
 /*********************************************************************/
 /*********************************************************************/
 
-int intake;
-int right;
-int left;
-int puncher;
-
-int one;
-int two;
-int three;
-int four;
-int five;
-int six;
-int seven;
-int eight;
-int nine;
-int ten;
-
 int autonProg;
 
 int autonColor;
@@ -74,17 +58,21 @@ int cutoffs[] = {0, 1024, 2048, 3072, 4096};
 int val1 = SensorValue[posPotent];
 int val2 = SensorValue[progPotent];
 
-bool driveReverse = false;
-
 string mainBattery, backupBattery;
 
 bool pidRunning=false;
 
 float pidRequestedValue;
 
-float pid_Kp=0;
-float pid_Ki=0;
-float pid_Kd=0;
+float pid_Kp=1.0;
+float pid_Ki=0.0;
+float pid_Kd=0.0;
+
+float leftChange;
+float rightChange;
+
+int leftEnc=SensorValue[leftEncoder]*-1;
+int rightEnc=SensorValue[rightEncoder]*-1;
 
 /*********************************************************************/
 /*********************************************************************/
@@ -98,38 +86,6 @@ float pid_Kd=0;
 
 void delayFunc(int time){
 	wait1Msec(time);
-}
-
-void motorRefresh() {
-
-    one = intake;
-    two = left;
-    three = left;
-    four = left;
-    five = puncher;
-    six = 0;//unused
-    seven = right;
-    eight = right;
-    nine = right;
-    ten = intake;
-}
-
-void motorVarSet(){
-    motorRefresh();
-
-    motor[port1]=one;
-    motor[port2]=left;
-    motor[port3]=three;
-    motor[port4]=four;
-    SetMotor(2,two);
-    SetMotor(3,three);
-    SetMotor(4,four);
-    motor[port5]=five;
-    motor[port6]=six;
-    SetMotor(7,seven);
-    SetMotor(8,eight);
-    SetMotor(9,nine);
-    motor[port10]=ten;
 }
 
 void resetEncoders() {
@@ -228,7 +184,6 @@ if (val1 >= cutoffs[0] && val1 < cutoffs[1]) {
    SmartMotorsInit();
 
    // Define which motors are linked
-   SmartMotorLinkMotors( left, right );
 
    // Declare that you want the Library to keep a lid on the
    // motors by measuring the temperature of the PTC components
@@ -238,6 +193,10 @@ if (val1 >= cutoffs[0] && val1 < cutoffs[1]) {
    SmartMotorRun();
     SmartMotorsInit();
     SmartMotorRun();
+
+    pidRunning=true;
+
+    pidRequestedValue=0;
 }
 
 /*********************************************************************/
@@ -297,7 +256,7 @@ task pidPos()
         if( pidRunning )
             {
             // Read the sensor value and scale
-            pidSensorCurrentValue = SensorValue[ leftEncoder ];
+            pidSensorCurrentValue = SensorValue[rightEncoder]*-1;
 
             // calculate error
             pidError = pidSensorCurrentValue - pidRequestedValue;
@@ -327,14 +286,18 @@ task pidPos()
             if( pidDrive < -90 )
                 pidDrive = -90;
 
-            // send to motor
-            motor[left1] = pidDrive;
-            motor[left2] = pidDrive;
-            motor[left3] = pidDrive;
+            leftChange=pidDrive*.6;
+            rightChange=pidDrive;
 
-            motor[right1] = pidDrive;
-            motor[right2] = pidDrive;
-            motor[right3] = pidDrive;
+            // send to motor
+            motor[left1] = leftChange*-1;
+            motor[left2] = leftChange*-1;
+            motor[left3] = leftChange*-1;
+
+            motor[right1]=rightChange;
+            motor[right2]=rightChange;
+            motor[right3]=rightChange;
+
             }
         else
             {
@@ -361,6 +324,7 @@ task pidPos()
 
 void pidPosReq(int val)
 {
+
     // send the motor off somewhere
     pidRequestedValue = val;
 
@@ -382,13 +346,15 @@ void pidPosReq(int val)
 }
 
 task intakeOnTask() {
-    while (true)
+    while (true){
         motor[intake2]=127;
+    }    
 }
 
 task intakeOffTask() {
-    while (true)
+    while (true){
         motor[intake2]=0;
+    }    
 }
 
 void intakeOn(){
@@ -415,16 +381,26 @@ void punch() {
 
     //puncher on
     startTask(puncherOnTask);
-    delayFunc(2000);
+    delayFunc(1000);
     stopTask(puncherOnTask);
     startTask(puncherOffTask);
     stopTask(puncherOffTask);
 }
 
 void auton(){
+    init();
     punch();
     intakeOn();
-    pidPosReq(1100);
+    while(leftEnc<=1100){
+        // send to motor
+        motor[left1] = 75;
+        motor[left2] = 75;
+        motor[left3] = 75;
+
+        motor[right1] = 75;
+        motor[right2] = 75;
+        motor[right3] = 75;
+    }
     intakeOff();
 }
 
@@ -438,41 +414,33 @@ void auton(){
 /*********************************************************************/
 /*********************************************************************/
 
-void driveFunc(int power1,int power2){
-    SetMotor(left1,power1*-1);
-	SetMotor(left2,power1*-1);
-    SetMotor(left3,power1*-1);
-
-    SetMotor(right1,power2);
-    SetMotor(right2,power2);
-	SetMotor(right3,power2);
-}
-
-void drive(){
-    if(driveReverse){
-        driveFunc(vexRT[Ch3],vexRT[Ch2]);
-    }else if(!driveReverse){
-        driveFunc(vexRT[Ch2]*-1,vexRT[Ch2*-1]);
-    }
-}
 
 void opcontrol(){
-    drive();
+    SetMotor(left1,vexRT[Ch3]*-1);
+	SetMotor(left2,vexRT[Ch3]*-1);
+    SetMotor(left3,vexRT[Ch3]*-1);
+
+    SetMotor(right1,vexRT[Ch2]);
+    SetMotor(right2,vexRT[Ch2]);
+	SetMotor(right3,vexRT[Ch2]);
 
 	if(vexRT[Btn5D]==1){
+        motor[intake1]=127;
 		motor[intake2]=127;
 	}else if(vexRT[Btn5U]==1){
-		motor[intake2]=-127;
+		motor[intake1]=-127;
+        motor[intake2]=-127;
     }else{
+        motor[intake1]=0;
 		motor[intake2]=0;
     }
 
 	if(vexRT[Btn6U]==1){
-		motor[puncherMain]=127;
+		motor[puncher]=127;
     }else if( vexRT[Btn6D]==1){
-		motor[puncherMain]=-127;
+		motor[puncher]=-127;
     }else{
-		motor[puncherMain]=0;
+		motor[puncher]=0;
     }
 
     if(vexRT[Btn7D]==1){
@@ -489,12 +457,4 @@ void opcontrol(){
     if(vexRT[Btn7R]==1){
         auton();
     }
-
-    if(vexRT[Btn8D]==1){
-        driveReverse=!driveReverse;
-    }
-
-    motorRefresh();
-
-    motorVarSet();
 }
