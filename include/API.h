@@ -271,33 +271,6 @@ void auton(){
             resetEncoders();
             while(leftEnc<=1100){
 
-                leftEnc=SensorValue[leftEncoder]*1;
-                rightEnc=SensorValue[rightEncoder]*1;
-
-                // send to motor
-                motor[left1] = -90;
-                motor[left2] = -90;
-                motor[left3] = -90;
-
-                motor[right1] = 90;
-                motor[right2] = 90;
-                motor[right3] = 90;
-            }
-
-            while(k<=10){
-                motor[intake1]=127;
-                motor[intake2]=127;
-
-                delayFunc(100);
-                k++;
-            }
-
-            motor[intake1]=0;
-            motor[intake2]=0;
-/*
-            resetEncoders();
-            while(leftEnc<=1100){
-
                 leftEnc=SensorValue[leftEncoder]*-1;
                 rightEnc=SensorValue[rightEncoder]*1;
 
@@ -311,6 +284,37 @@ void auton(){
                 motor[right3] = -90;
             }
 
+            resetEncoders();
+            while(leftEnc<=1100){
+
+                leftEnc=SensorValue[leftEncoder]*1;
+                rightEnc=SensorValue[rightEncoder]*1;
+
+                // send to motor
+                motor[left1] = -90;
+                motor[left2] = -90;
+                motor[left3] = -90;
+
+                motor[right1] = 90;
+                motor[right2] = 90;
+                motor[right3] = 90;
+            }
+
+/*
+            while(k<=10){
+                motor[intake1]=-127;
+                motor[intake2]=-127;
+
+                delayFunc(100);
+                k++;
+            }
+
+            motor[intake1]=0;
+            motor[intake2]=0;
+*/
+
+
+            resetEncoders();
             while(leftEnc<=200){
 
                 leftEnc=SensorValue[leftEncoder]*1;
@@ -358,7 +362,7 @@ void auton(){
                 }                
                 punch();
             }
-*/
+
 }//void end
 
 /*********************************************************************/
