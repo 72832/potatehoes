@@ -123,7 +123,7 @@ task usercontrol() {
     pidRunning=false;
 
     while (true) {
-        opcontrol();
+      opcontrol();
     }
 }
 

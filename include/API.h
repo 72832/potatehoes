@@ -126,52 +126,50 @@ void lcdBattery() {
     wait1Msec(100);
 }
 
+void autonLCD(){
+    bLCDBacklight=true;
+
+    clearLCD();
+
+    setLCDPosition(0,0);
+
+    if(autonColor==0){
+
+        displayNextLCDString("Color = Red");
+
+    }else if(autonColor==1){
+
+        displayNextLCDString("Color = Blue");
+
+    }
+
+    setLCDPosition(1,0);
+
+    if(autonPos==0){
+
+        displayNextLCDString("Pos = Back");
+
+    }else if(autonPos==1){
+
+        displayNextLCDString("Pos = Front");
+
+    }
+}
+
 void init() {
 	//auton menu
 if (val1 >= cutoffs[0] && val1 < cutoffs[1]) {
     autonColor=red;
     autonPos=back;
-    if (val2 >= cutoffs[0] && val2 < cutoffs[1])
-        autonProg = 0;
-    else if (val2 >= cutoffs[1] && val2 < cutoffs[2])
-        autonProg = 1;
-    else if (val2 >= cutoffs[2] && val2 < cutoffs[3])
-        autonProg = 2;
-    else if (val2 >= cutoffs[3] && val2 < cutoffs[4])
-        autonProg = 3;
 } else if (val1 >= cutoffs[1] && val1 < cutoffs[2]) {
     autonColor=red;
     autonPos=front;
-    if (val2 >= cutoffs[0] && val2 < cutoffs[1])
-        autonProg = 0;
-    else if (val2 >= cutoffs[1] && val2 < cutoffs[2])
-        autonProg = 1;
-    else if (val2 >= cutoffs[2] && val2 < cutoffs[3])
-        autonProg = 2;
-    else if (val2 >= cutoffs[3] && val2 < cutoffs[4])
-        autonProg = 3;
 } else if (val1 >= cutoffs[2] && val1 < cutoffs[3]) {
     autonColor=blue;
     autonPos=front;
-    if (val2 >= cutoffs[0] && val2 < cutoffs[1])
-        autonProg = 0;
-    else if (val2 >= cutoffs[1] && val2 < cutoffs[2])
-        autonProg = 1;
-    else if (val2 >= cutoffs[2] && val2 < cutoffs[3])
-        autonProg = 2;
-    else if (val2 >= cutoffs[3] && val2 < cutoffs[4])
-        autonProg = 3;
 } else if (val1 >= cutoffs[3] && val1 < cutoffs[4]) {
     autonColor=blue;
     autonPos=back;
-    if (val2 >= cutoffs[0] && val2 < cutoffs[1])
-        autonProg = 0;
-    else if (val2 >= cutoffs[1] && val2 < cutoffs[2])
-        autonProg = 1;
-    else if (val2 >= cutoffs[2] && val2 < cutoffs[3])
-        autonProg = 2;
-    else if (val2 >= cutoffs[3] && val2 < cutoffs[4])
-        autonProg = 3;
 }
     resetEncoders();
     // Set bStopTasksBetweenModes to false if you want to keep
@@ -189,10 +187,11 @@ if (val1 >= cutoffs[0] && val1 < cutoffs[1]) {
    // motors by measuring the temperature of the PTC components
    SmartMotorPtcMonitorEnable();
 
-   // Run smart motors
-   SmartMotorRun();
+    // Run smart motors
+    SmartMotorRun();
     SmartMotorsInit();
     SmartMotorRun();
+
 
     pidRunning=true;
 
@@ -318,7 +317,7 @@ task pidPos()
             }
 
         // Run at 50Hz
-        wait1Msec( 25 );
+        wait1Msec( 50 );
         }
 }
 
@@ -400,35 +399,34 @@ void punch() {
 /*                                                                             */
 /*-----------------------------------------------------------------------------*/
 
-
 void auton(){
+    
+
     resetEncoders();
     punch();
 
 /*-----------------------------------------------------------------------------*/
 /*  autonomous red                                                           */
 /*-----------------------------------------------------------------------------*/
-
+    
     if(autonColor==red){
-        while(leftEnc<=600){
-            resetEncoders();
+        while(leftEnc<200){
             leftEnc=SensorValue[leftEncoder]*1;
             rightEnc=SensorValue[rightEncoder]*1;
         
             // send to motor
-            motor[left1] = -75;
-            motor[left2] = -75;
-            motor[left3] = -75;
+            motor[left1] = -50;
+            motor[left2] = -50;
+            motor[left3] = -50;
 
-            motor[right1] = -75;
-            motor[right2] = -75;
-            motor[right3] = -75;            
+            motor[right1] = -50;
+            motor[right2] = -50;
+            motor[right3] = -50;            
         
         }
 
+        resetEncoders();
         while(leftEnc>=-200){
-            resetEncoders();
-
             leftEnc=SensorValue[leftEncoder]*1;
             rightEnc=SensorValue[rightEncoder]*1;
 
@@ -442,9 +440,8 @@ void auton(){
             motor[right3] = -90;            
         }
 
+        resetEncoders();
         while(leftEnc<=1100){
-            resetEncoders();
-
             leftEnc=SensorValue[leftEncoder]*1;
             rightEnc=SensorValue[rightEncoder]*1;
 
@@ -461,10 +458,6 @@ void auton(){
         motor[intake1]=90;
         motor[intake2]=90;
 
-        delayFunc(2000);
-
-        motor[intake1]=0;
-        motor[intake2]=0;
 
 /*-----------------------------------------------------------------------------*/
 /*  autonomous front                                                           */
@@ -541,25 +534,24 @@ void auton(){
 /*-----------------------------------------------------------------------------*/
 
     }else if(autonColor==blue){
-        while(leftEnc>=-600){
-            resetEncoders();
-            leftEnc=SensorValue[leftEncoder]*1;
+        resetEncoders();
+        while(leftEnc<200){
+            leftEnc=SensorValue[leftEncoder]*-1;
             rightEnc=SensorValue[rightEncoder]*1;
         
             // send to motor
-            motor[left1] = 75;
-            motor[left2] = 75;
-            motor[left3] = 75;
+            motor[left1] = 50;
+            motor[left2] = 50;
+            motor[left3] = 50;
 
-            motor[right1] = 75;
-            motor[right2] = 75;
-            motor[right3] = 75;            
+            motor[right1] = 50;
+            motor[right2] = 50;
+            motor[right3] = 50;            
         
         }
 
+        resetEncoders();
         while(leftEnc>=-200){
-            resetEncoders();
-
             leftEnc=SensorValue[leftEncoder]*1;
             rightEnc=SensorValue[rightEncoder]*1;
 
@@ -573,9 +565,8 @@ void auton(){
             motor[right3] = -90;            
         }
 
+        resetEncoders();
         while(leftEnc<=1100){
-            resetEncoders();
-
             leftEnc=SensorValue[leftEncoder]*1;
             rightEnc=SensorValue[rightEncoder]*1;
 
@@ -592,10 +583,6 @@ void auton(){
         motor[intake1]=90;
         motor[intake2]=90;
 
-        delayFunc(2000);
-
-        motor[intake1]=0;
-        motor[intake2]=0;
 /*-----------------------------------------------------------------------------*/
 /*  autonomous front                                                           */
 /*-----------------------------------------------------------------------------*/
@@ -679,6 +666,9 @@ void auton(){
 
 
 void opcontrol(){
+
+	autonLCD();
+
     SetMotor(left1,vexRT[Ch3]*-1);
 	SetMotor(left2,vexRT[Ch3]*-1);
     SetMotor(left3,vexRT[Ch3]*-1);
