@@ -268,20 +268,34 @@ void auton(){
 
 	        autonLCD();
 
-            resetEncoders();
-            while(leftEnc<=1100){
-
-                leftEnc=SensorValue[leftEncoder]*-1;
-                rightEnc=SensorValue[rightEncoder]*1;
+            while(true){                
+                resetEncoders();                
+                if(leftEnc<=1100){
+                    leftEnc=SensorValue[leftEncoder]*1;
 
                     // send to motor
-                motor[left1] = 90;
-                motor[left2] = 90;
-                motor[left3] = 90;
+                    motor[left1] = -90;
+                    motor[left2] = -90;
+                    motor[left3] = -90;
 
-                motor[right1] = -90;
-                motor[right2] = -90;
-                motor[right3] = -90;
+                    motor[right1] = 90;
+                    motor[right2] = 90;
+                    motor[right3] = 90;
+                }    
+
+                resetEncoders();
+                if(leftEnc<=1100){
+                    leftEnc=SensorValue[leftEncoder]*-1;
+
+                    // send to motor
+                    motor[left1] = 90;
+                    motor[left2] = 90;
+                    motor[left3] = 90;
+
+                    motor[right1] = -90;
+                    motor[right2] = -90;
+                    motor[right3] = -90;
+                }
             }
 
             resetEncoders();
@@ -312,7 +326,6 @@ void auton(){
             motor[intake1]=0;
             motor[intake2]=0;
 */
-
 
             resetEncoders();
             while(leftEnc<=200){
