@@ -350,17 +350,16 @@ void pidPosReq(int val)
 /*                                                                             */
 /*-----------------------------------------------------------------------------*/
 
-
 task intakeOnTask() {
     while (true){
         motor[intake2]=127;
-    }    
+    }
 }
 
 task intakeOffTask() {
     while (true){
         motor[intake2]=0;
-    }    
+    }
 }
 
 void intakeOn(){
@@ -393,12 +392,11 @@ void punch() {
     stopTask(puncherOffTask);
 }
 
-/*-----------------------------------------------------------------------------*/
-/*                                                                             */
-/*  autonomous code                                                           */
-/*                                                                             */
-/*-----------------------------------------------------------------------------*/
+void bckFwdIntkBck(){
+    while(leftEnc>=-200){
+        resetEncoders();
 
+<<<<<<< HEAD
 void auton(){
     
 
@@ -411,10 +409,29 @@ void auton(){
     
     if(autonColor==red){
         while(leftEnc<200){
+=======
+        leftEnc=SensorValue[leftEncoder]*1;
+        rightEnc=SensorValue[rightEncoder]*1;
+
+            // send to motor
+        motor[left1] = 90;
+        motor[left2] = 90;
+        motor[left3] = 90;
+
+        motor[right1] = -90;
+        motor[right2] = -90;
+        motor[right3] = -90;
+    }
+
+        resetEncoders();
+        while(leftEnc<=1100){
+
+>>>>>>> 8ca05c1427225e2c6df224903b1127b897d9985f
             leftEnc=SensorValue[leftEncoder]*1;
             rightEnc=SensorValue[rightEncoder]*1;
-        
+
             // send to motor
+<<<<<<< HEAD
             motor[left1] = -50;
             motor[left2] = -50;
             motor[left3] = -50;
@@ -428,24 +445,7 @@ void auton(){
         resetEncoders();
         while(leftEnc>=-200){
             leftEnc=SensorValue[leftEncoder]*1;
-            rightEnc=SensorValue[rightEncoder]*1;
-
-            // send to motor
-            motor[left1] = 90;
-            motor[left2] = 90;
-            motor[left3] = 90;
-
-            motor[right1] = -90;
-            motor[right2] = -90;
-            motor[right3] = -90;            
-        }
-
-        resetEncoders();
-        while(leftEnc<=1100){
-            leftEnc=SensorValue[leftEncoder]*1;
-            rightEnc=SensorValue[rightEncoder]*1;
-
-            // send to motor
+=======
             motor[left1] = -90;
             motor[left2] = -90;
             motor[left3] = -90;
@@ -455,21 +455,63 @@ void auton(){
             motor[right3] = 90;
         }
 
-        motor[intake1]=90;
-        motor[intake2]=90;
+        for(int k; k<=10;k++){
+            motor[intake1]=90;
+            motor[intake2]=90;
 
+            delayFunc(100);
+        }
 
-/*-----------------------------------------------------------------------------*/
-/*  autonomous front                                                           */
-/*-----------------------------------------------------------------------------*/
+        motor[intake1]=0;
+        motor[intake2]=0;
 
+        resetEncoders();
+        while(leftEnc<=400){
 
-/*--        
-        if(autonPos=front){
+            leftEnc=SensorValue[leftEncoder]*-1;
+>>>>>>> 8ca05c1427225e2c6df224903b1127b897d9985f
+            rightEnc=SensorValue[rightEncoder]*1;
 
-            while(leftEnc<=1100){
-                resetEncoders();
+                // send to motor
+            motor[left1] = 90;
+            motor[left2] = 90;
+            motor[left3] = 90;
 
+            motor[right1] = -90;
+            motor[right2] = -90;
+            motor[right3] = -90;
+        }
+}
+
+<<<<<<< HEAD
+        resetEncoders();
+        while(leftEnc<=1100){
+            leftEnc=SensorValue[leftEncoder]*1;
+            rightEnc=SensorValue[rightEncoder]*1;
+=======
+void bckFwdFront(){
+            resetEncoders();
+            while(leftEnc<=200){
+
+                leftEnc=SensorValue[leftEncoder]*-1;
+                rightEnc=SensorValue[rightEncoder]*1;
+>>>>>>> 8ca05c1427225e2c6df224903b1127b897d9985f
+
+                // send to motor
+                motor[left1] = 90;
+                motor[left2] = 90;
+                motor[left3] = 90;
+
+                motor[right1] = -90;
+                motor[right2] = -90;
+                motor[right3] = -90;
+            }
+
+            resetEncoders();
+            while(leftEnc<=400){
+
+<<<<<<< HEAD
+=======
                 leftEnc=SensorValue[leftEncoder]*1;
                 rightEnc=SensorValue[rightEncoder]*1;
 
@@ -477,16 +519,19 @@ void auton(){
                 motor[left1] = -90;
                 motor[left2] = -90;
                 motor[left3] = -90;
+>>>>>>> 8ca05c1427225e2c6df224903b1127b897d9985f
 
                 motor[right1] = 90;
                 motor[right2] = 90;
                 motor[right3] = 90;
             }
+}
 
-            while(leftEncoder>=-1100){
-                resetEncoders();
+void bckBckFront(){
+            resetEncoders();
+            while(leftEnc<=400){
 
-                leftEnc=SensorValue[leftEncoder]*1;
+                leftEnc=SensorValue[leftEncoder]*-1;
                 rightEnc=SensorValue[rightEncoder]*1;
 
                 // send to motor
@@ -498,8 +543,29 @@ void auton(){
                 motor[right2] = -90;
                 motor[right3] = -90;
             }
-            while(leftEncoder<=400){
-                resetEncoders();
+
+            delayFunc(1000);
+
+            resetEncoders();
+            while(leftEnc<=600){
+
+                leftEnc=SensorValue[leftEncoder]*-1;
+                rightEnc=SensorValue[rightEncoder]*1;
+
+                // send to motor
+                motor[left1] = 90;
+                motor[left2] = 90;
+                motor[left3] = 90;
+
+                motor[right1] = -90;
+                motor[right2] = -90;
+                motor[right3] = -90;
+            }
+}
+
+void fwdBckFwdBack(){
+            resetEncoders();
+            while(leftEnc<=200){
 
                 leftEnc=SensorValue[leftEncoder]*1;
                 rightEnc=SensorValue[rightEncoder]*1;
@@ -513,37 +579,184 @@ void auton(){
                 motor[right2] = 90;
                 motor[right3] = 90;
             }
-            punch();
 
---*/
+            resetEncoders();
+            while(leftEnc<=1100){
 
-/*-----------------------------------------------------------------------------*/
-/*  autonomous back                                                            */
-/*-----------------------------------------------------------------------------*/
+                leftEnc=SensorValue[leftEncoder]*-1;
+                rightEnc=SensorValue[rightEncoder]*1;
 
-/*--
-        }else if(autonPos=back){
+                // send to motor
+                motor[left1] = 90;
+                motor[left2] = 90;
+                motor[left3] = 90;
 
-        }
---*/            
+                motor[right1] = -90;
+                motor[right2] = -90;
+                motor[right3] = -90;
+            }
+
+            resetEncoders();
+            while(leftEnc<=400){
+
+                leftEnc=SensorValue[leftEncoder]*1;
+                rightEnc=SensorValue[rightEncoder]*1;
+
+                // send to motor
+                motor[left1] = -90;
+                motor[left2] = -90;
+                motor[left3] = -90;
+
+                motor[right1] = 90;
+                motor[right2] = 90;
+                motor[right3] = 90;
+            }
+}
+
+
+void bckFwdFwdBack(){
+            resetEncoders();
+            while(leftEnc<=400){
+
+                leftEnc=SensorValue[leftEncoder]*-1;
+                rightEnc=SensorValue[rightEncoder]*1;
+
+                // send to motor
+                motor[left1] = 90;
+                motor[left2] = 90;
+                motor[left3] = 90;
+
+                motor[right1] = -90;
+                motor[right2] = -90;
+                motor[right3] = -90;
+            }
+
+            resetEncoders();
+            while(leftEnc<=1100){
+
+                leftEnc=SensorValue[leftEncoder]*1;
+                rightEnc=SensorValue[rightEncoder]*1;
+
+                // send to motor
+                motor[left1] = -90;
+                motor[left2] = -90;
+                motor[left3] = -90;
+
+                motor[right1] = 90;
+                motor[right2] = 90;
+                motor[right3] = 90;
+            }
+
+            delayFunc(1000);
+
+            resetEncoders();
+            while(leftEnc<=500){
+
+                leftEnc=SensorValue[leftEncoder]*1;
+                rightEnc=SensorValue[rightEncoder]*1;
+
+                // send to motor
+                motor[left1] = -90;
+                motor[left2] = -90;
+                motor[left3] = -90;
+
+                motor[right1] = 90;
+                motor[right2] = 90;
+                motor[right3] = 90;
+            }
+}
 
 /*-----------------------------------------------------------------------------*/
 /*                                                                             */
-/*  autonomous blue                                                            */
+/*                                                                             */
+/*  autonomous code                                                            */
+/*                                                                             */
 /*                                                                             */
 /*-----------------------------------------------------------------------------*/
 
+void auton(){
+    resetEncoders();
+
+/*-----------------------------------------------------------------------------*/
+/*                                                                             */
+/*  autonomous red                                                             */
+/*                                                                             */
+/*-----------------------------------------------------------------------------*/
+
+<<<<<<< HEAD
     }else if(autonColor==blue){
         resetEncoders();
         while(leftEnc<200){
             leftEnc=SensorValue[leftEncoder]*-1;
+=======
+    if(autonColor==red){
+        if(autonPos==back){
+            restartEncoders();
+            while(leftEnc<=200){
+
+                leftEnc=SensorValue[leftEncoder]*-1;
+                rightEnc=SensorValue[rightEncoder]*1;
+
+                // send to motor
+                motor[left1] = 90;
+                motor[left2] = 90;
+                motor[left3] = 90;
+
+                motor[right1] = -90;
+                motor[right2] = -90;
+                motor[right3] = -90;
+            }
+
+            punch();
+            resetEncoders();
+            while(leftEnc<=200){
+
+                leftEnc=SensorValue[leftEncoder]*1;
+                rightEnc=SensorValue[rightEncoder]*1;
+
+                // send to motor
+                motor[left1] = -90;
+                motor[left2] = -90;
+                motor[left3] = -90;
+
+                motor[right1] = 90;
+                motor[right2] = 90;
+                motor[right3] = 90;
+            }
+        }else{
+            punch();
+        }
+
+        resetEncoders();
+        while(leftEnc<=600){
+            leftEnc=SensorValue[leftEncoder]*1;
+>>>>>>> 8ca05c1427225e2c6df224903b1127b897d9985f
             rightEnc=SensorValue[rightEncoder]*1;
-        
+
+            // send to motor
+            motor[left1] = -75;
+            motor[left2] = -75;
+            motor[left3] = -75;
+
+            motor[right1] = -75;
+            motor[right2] = -75;
+            motor[right3] = -75;
+
+        }
+
+        bckFwdIntkBck();
+
+        resetEncoders();
+        while(leftEnc<=600){
+            leftEnc=SensorValue[leftEncoder]*-1;
+            rightEnc=SensorValue[rightEncoder]*1;
+
             // send to motor
             motor[left1] = 50;
             motor[left2] = 50;
             motor[left3] = 50;
 
+<<<<<<< HEAD
             motor[right1] = 50;
             motor[right2] = 50;
             motor[right3] = 50;            
@@ -554,63 +767,126 @@ void auton(){
         while(leftEnc>=-200){
             leftEnc=SensorValue[leftEncoder]*1;
             rightEnc=SensorValue[rightEncoder]*1;
+=======
+            motor[right1] = 75;
+            motor[right2] = 75;
+            motor[right3] = 75;
 
-            // send to motor
-            motor[left1] = 90;
-            motor[left2] = 90;
-            motor[left3] = 90;
-
-            motor[right1] = -90;
-            motor[right2] = -90;
-            motor[right3] = -90;            
         }
 
-        resetEncoders();
-        while(leftEnc<=1100){
-            leftEnc=SensorValue[leftEncoder]*1;
-            rightEnc=SensorValue[rightEncoder]*1;
-
-            // send to motor
-            motor[left1] = -90;
-            motor[left2] = -90;
-            motor[left3] = -90;
-
-            motor[right1] = 90;
-            motor[right2] = 90;
-            motor[right3] = 90;
-        }
-
-        motor[intake1]=90;
-        motor[intake2]=90;
 
 /*-----------------------------------------------------------------------------*/
 /*  autonomous front                                                           */
 /*-----------------------------------------------------------------------------*/
+>>>>>>> 8ca05c1427225e2c6df224903b1127b897d9985f
 
+        if(autonPos==front){
 
-/*--        
-        if(autonPos=front){
+            bckFwdFront();
 
-            while(leftEnc<=1100){
-                resetEncoders();
+<<<<<<< HEAD
+        resetEncoders();
+        while(leftEnc<=1100){
+            leftEnc=SensorValue[leftEncoder]*1;
+            rightEnc=SensorValue[rightEncoder]*1;
+=======
+            resetEncoders();
+            while(leftEnc<=300){
+                leftEnc=SensorValue[leftEncoder]*1;
+                rightEnc=SensorValue[rightEncoder]*1;
+
+                // send to motor
+                motor[left1] = -75;
+                motor[left2] = -75;
+                motor[left3] = -75;
+>>>>>>> 8ca05c1427225e2c6df224903b1127b897d9985f
+
+                motor[right1] = -75;
+                motor[right2] = -75;
+                motor[right3] = -75;
+            }
+
+            punch();
+
+            resetEncoders();
+            while(leftEnc<=300){
+                leftEnc=SensorValue[leftEncoder]*-1;
+                rightEnc=SensorValue[rightEncoder]*1;
+
+<<<<<<< HEAD
+=======
+                // send to motor
+                motor[left1] = 75;
+                motor[left2] = 75;
+                motor[left3] = 75;
+
+                motor[right1] = 75;
+                motor[right2] = 75;
+                motor[right3] = 75;
+            }
+
+            bckBckFront();
+        }
+
+>>>>>>> 8ca05c1427225e2c6df224903b1127b897d9985f
+/*-----------------------------------------------------------------------------*/
+/*  autonomous back                                                            */
+/*-----------------------------------------------------------------------------*/
+
+        else if(autonPos=back){
+
+            fwdBckFwdBack();
+
+            resetEncoders();
+            while(leftEnc<=300){
 
                 leftEnc=SensorValue[leftEncoder]*1;
                 rightEnc=SensorValue[rightEncoder]*1;
 
                 // send to motor
-                motor[left1] = -90;
-                motor[left2] = -90;
-                motor[left3] = -90;
+                motor[left1] = -75;
+                motor[left2] = -75;
+                motor[left3] = -75;
 
-                motor[right1] = 90;
-                motor[right2] = 90;
-                motor[right3] = 90;
+                motor[right1] = -75;
+                motor[right2] = -75;
+                motor[right3] = -75;
             }
 
-            while(leftEncoder>=-1100){
-                resetEncoders();
+            punch();
 
+            resetEncoders();
+            while(leftEnc<=300){
                 leftEnc=SensorValue[leftEncoder]*1;
+                rightEnc=SensorValue[rightEncoder]*1;
+
+                // send to motor
+                motor[left1] = 75;
+                motor[left2] = 75;
+                motor[left3] = 75;
+
+                motor[right1] = 75;
+                motor[right2] = 75;
+                motor[right3] = 75;
+            }
+
+            bckFwdFwdBack();
+
+        }
+    }
+
+/*-----------------------------------------------------------------------------*/
+/*                                                                             */
+/*  autonomous blue                                                            */
+/*                                                                             */
+/*-----------------------------------------------------------------------------*/
+
+    else if(autonColor==blue){
+        if(autonPos==back){
+            restartEncoders();
+            while(leftEnc<=200){
+
+                leftEnc=SensorValue[leftEncoder]*-1;
                 rightEnc=SensorValue[rightEncoder]*1;
 
                 // send to motor
@@ -622,8 +898,11 @@ void auton(){
                 motor[right2] = -90;
                 motor[right3] = -90;
             }
-            while(leftEncoder<=400){
-                resetEncoders();
+
+            punch();
+
+            resetEncoders();
+            while(leftEnc<=200){
 
                 leftEnc=SensorValue[leftEncoder]*1;
                 rightEnc=SensorValue[rightEncoder]*1;
@@ -637,20 +916,144 @@ void auton(){
                 motor[right2] = 90;
                 motor[right3] = 90;
             }
+        }else{
+            punch();
+        }
+
+        resetEncoders();
+        while(leftEnc<=600){
+            leftEnc=SensorValue[leftEncoder]*-1;
+            rightEnc=SensorValue[rightEncoder]*1;
+
+            // send to motor
+            motor[left1] = 75;
+            motor[left2] = 75;
+            motor[left3] = 75;
+
+            motor[right1] = 75;
+            motor[right2] = 75;
+            motor[right3] = 75;
+
+        }
+
+        bckFwdIntkBck();
+
+        resetEncoders();
+        while(leftEnc<=600){
+            leftEnc=SensorValue[leftEncoder]*1;
+            rightEnc=SensorValue[rightEncoder]*1;
+
+            // send to motor
+            motor[left1] = -75;
+            motor[left2] = -75;
+            motor[left3] = -75;
+
+            motor[right1] = -75;
+            motor[right2] = -75;
+            motor[right3] = -75;
+
+        }
+
+/*-----------------------------------------------------------------------------*/
+/*  autonomous front                                                           */
+/*-----------------------------------------------------------------------------*/
+
+        if(autonPos=front){
+            resetEncoders();
+            while(leftEnc<=600){
+                leftEnc=SensorValue[leftEncoder]*1;
+                rightEnc=SensorValue[rightEncoder]*1;
+
+                // send to motor
+                motor[left1] = -75;
+                motor[left2] = -75;
+                motor[left3] = -75;
+
+                motor[right1] = -75;
+                motor[right2] = -75;
+                motor[right3] = -75;
+            }
+
+            bckFwdFront();
+
+            resetEncoders();
+            while(leftEnc<=300){
+                leftEnc=SensorValue[leftEncoder]*-1;
+                rightEnc=SensorValue[rightEncoder]*1;
+
+                // send to motor
+                motor[left1] = 75;
+                motor[left2] = 75;
+                motor[left3] = 75;
+
+                motor[right1] = 75;
+                motor[right2] = 75;
+                motor[right3] = 75;
+            }
+
             punch();
 
---*/
+            resetEncoders();
+            while(leftEnc<=300){
+                leftEnc=SensorValue[leftEncoder]*1;
+                rightEnc=SensorValue[rightEncoder]*1;
+
+                // send to motor
+                motor[left1] = -75;
+                motor[left2] = -75;
+                motor[left3] = -75;
+
+                motor[right1] = -75;
+                motor[right2] = -75;
+                motor[right3] = -75;
+            }
+
+            bckBckFront();
+        }
 
 /*-----------------------------------------------------------------------------*/
 /*  autonomous back                                                            */
 /*-----------------------------------------------------------------------------*/
 
-/*--
-        }else if(autonPos=back){
+        else if(autonPos=back){
 
+            fwdBckFwdBack();
+
+            resetEncoders();
+            while(leftEnc<=300){
+
+                leftEnc=SensorValue[leftEncoder]*1;
+                rightEnc=SensorValue[rightEncoder]*1;
+
+                // send to motor
+                motor[left1] = -75;
+                motor[left2] = -75;
+                motor[left3] = -75;
+
+                motor[right1] = -75;
+                motor[right2] = -75;
+                motor[right3] = -75;
+            }
+
+            punch();
+
+            resetEncoders();
+            while(leftEnc<=300){
+                leftEnc=SensorValue[leftEncoder]*1;
+                rightEnc=SensorValue[rightEncoder]*1;
+
+                // send to motor
+                motor[left1] = 75;
+                motor[left2] = 75;
+                motor[left3] = 75;
+
+                motor[right1] = 75;
+                motor[right2] = 75;
+                motor[right3] = 75;
+            }
+
+            bckFwdFwdBack();
         }
---*/            
-
     }
 }
 
@@ -663,7 +1066,6 @@ void auton(){
 /*********************************************************************/
 /*********************************************************************/
 /*********************************************************************/
-
 
 void opcontrol(){
 
