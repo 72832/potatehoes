@@ -351,7 +351,6 @@ void pidPosReq(int val)
 /*                                                                             */
 /*-----------------------------------------------------------------------------*/
 
-
 task intakeOnTask() {
     while (true){
         motor[intake2]=127;
@@ -394,22 +393,81 @@ void punch() {
     stopTask(puncherOffTask);
 }
 
+void bckFwdIntkBck(){
+    while(leftEnc>=-200){
+        resetEncoders();
+
+        leftEnc=SensorValue[leftEncoder]*1;
+        rightEnc=SensorValue[rightEncoder]*1;
+
+            // send to motor
+        motor[left1] = 90;
+        motor[left2] = 90;
+        motor[left3] = 90;
+
+        motor[right1] = -90;
+        motor[right2] = -90;
+        motor[right3] = -90;            
+    }
+        
+        resetEncoders();
+        while(leftEnc<=1100){
+
+            leftEnc=SensorValue[leftEncoder]*1;
+            rightEnc=SensorValue[rightEncoder]*1;
+
+            // send to motor
+            motor[left1] = -90;
+            motor[left2] = -90;
+            motor[left3] = -90;
+
+            motor[right1] = 90;
+            motor[right2] = 90;
+            motor[right3] = 90;
+        }
+
+        for(int i, i<=10,int++){
+            motor[intake1]=90;
+            motor[intake2]=90;
+
+            delayFunc(100);
+        }    
+
+        motor[intake1]=0;
+        motor[intake2]=0;
+
+        resetEncoders();
+        while(leftEnc<=400){
+
+            leftEnc=SensorValue[leftEncoder]*-1;
+            rightEnc=SensorValue[rightEncoder]*1;
+
+                // send to motor
+            motor[left1] = 90;
+            motor[left2] = 90;
+            motor[left3] = 90;
+
+            motor[right1] = -90;
+            motor[right2] = -90;
+            motor[right3] = -90;
+        }
+}
+
 /*-----------------------------------------------------------------------------*/
 /*                                                                             */
 /*  autonomous code                                                           */
 /*                                                                             */
 /*-----------------------------------------------------------------------------*/
 
-
 void auton(){
     resetEncoders();
-    punch();
 
 /*-----------------------------------------------------------------------------*/
 /*  autonomous red                                                           */
 /*-----------------------------------------------------------------------------*/
 
     if(autonColor==red){
+        punch();
         while(leftEnc<=600){
             resetEncoders();
             leftEnc=SensorValue[leftEncoder]*1;
@@ -425,75 +483,18 @@ void auton(){
             motor[right3] = -75;            
         
         }
-
-        while(leftEnc>=-200){
-            resetEncoders();
-
-            leftEnc=SensorValue[leftEncoder]*1;
-            rightEnc=SensorValue[rightEncoder]*1;
-
-            // send to motor
-            motor[left1] = 90;
-            motor[left2] = 90;
-            motor[left3] = 90;
-
-            motor[right1] = -90;
-            motor[right2] = -90;
-            motor[right3] = -90;            
-        }
-
-        while(leftEnc<=1100){
-            resetEncoders();
-
-            leftEnc=SensorValue[leftEncoder]*1;
-            rightEnc=SensorValue[rightEncoder]*1;
-
-            // send to motor
-            motor[left1] = -90;
-            motor[left2] = -90;
-            motor[left3] = -90;
-
-            motor[right1] = 90;
-            motor[right2] = 90;
-            motor[right3] = 90;
-        }
-
-        motor[intake1]=90;
-        motor[intake2]=90;
-
-        delayFunc(2000);
-
-        motor[intake1]=0;
-        motor[intake2]=0;
+        bckFwdIntkBck();
 
 /*-----------------------------------------------------------------------------*/
 /*  autonomous front                                                           */
 /*-----------------------------------------------------------------------------*/
 
-
-/*--        
         if(autonPos=front){
 
-            while(leftEnc<=1100){
-                resetEncoders();
+            resetEncoders();
+            while(leftEncoder<400){
 
-                leftEnc=SensorValue[leftEncoder]*1;
-                rightEnc=SensorValue[rightEncoder]*1;
-
-                // send to motor
-                motor[left1] = -90;
-                motor[left2] = -90;
-                motor[left3] = -90;
-
-                motor[right1] = 90;
-                motor[right2] = 90;
-                motor[right3] = 90;
-            }
-
-            while(leftEncoder>=-1100){
-                resetEncoders();
-
-                leftEnc=SensorValue[leftEncoder]*1;
+                leftEnc=SensorValue[leftEncoder]*-1;
                 rightEnc=SensorValue[rightEncoder]*1;
 
                 // send to motor
@@ -505,31 +506,27 @@ void auton(){
                 motor[right2] = -90;
                 motor[right3] = -90;
             }
-            while(leftEncoder<=400){
-                resetEncoders();
-
+            resetEncoders();
+            while(leftEnc<=600){
                 leftEnc=SensorValue[leftEncoder]*1;
                 rightEnc=SensorValue[rightEncoder]*1;
-
+        
                 // send to motor
-                motor[left1] = -90;
-                motor[left2] = -90;
-                motor[left3] = -90;
+                motor[left1] = -75;
+                motor[left2] = -75;
+                motor[left3] = -75;
 
-                motor[right1] = 90;
-                motor[right2] = 90;
-                motor[right3] = 90;
+                motor[right1] = -75;
+                motor[right2] = -75;
+                motor[right3] = -75;                
             }
-            punch();
-
---*/
+        }    
 
 /*-----------------------------------------------------------------------------*/
 /*  autonomous back                                                            */
 /*-----------------------------------------------------------------------------*/
 
-/*--
-        }else if(autonPos=back){
+        else if(autonPos=back){
 
         }
 --*/            
