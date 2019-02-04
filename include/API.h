@@ -188,7 +188,6 @@ void autonInit(){
         autonColor=blue;
         autonPos=back;
     }
-
 	//auton menu
     if (val2 >= cutoffs[0] && val2 < cutoffs[1]) {
         autonRun=yes;
