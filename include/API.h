@@ -67,7 +67,7 @@ float pidRequestedValue;
 int leftEnc=SensorValue[leftEncoder]*-1;
 int rightEnc=SensorValue[rightEncoder]*-1;
 
-int k;
+int k=0;
 
 /*********************************************************************/
 /*********************************************************************/
@@ -173,7 +173,7 @@ void autonInit(){
 }
 
 void init() {
-    
+
     autonInit();
 
     // Set bStopTasksBetweenModes to false if you want to keep
@@ -224,16 +224,6 @@ task intakeOffTask() {
     }
 }
 
-void intakeOn(){
-    startTask(intakeOnTask);
-}
-
-void intakeOff(){
-    stopTask(intakeOnTask);
-    startTask(intakeOffTask);
-    stopTask(intakeOffTask);
-}
-
 task puncherOnTask() {
     while (true)
         motor[puncher]=127;
@@ -262,103 +252,86 @@ void punch() {
 /*                                                                             */
 /*-----------------------------------------------------------------------------*/
 
+int wheelCircumference=4 /*diameter*/ * 3.1 /*PI simplified*/;
+
+
+
+void driveForward(static float tiles, static int speed=90){
+
+    static float wheelRotations;
+
+    static int clicks;
+
+    wheelRotations = (tiles*24) / (wheelCircumference);
+
+    clicks = wheelRotations*360;
+
+    resetEncoders();
+
+    while(leftEnc<=clicks){
+
+        leftEnc=SensorValue[leftEncoder];
+
+        motor[left1]=speed*-1;
+        motor[left2]=speed*-1;
+        motor[left3]=speed*-1;
+
+        motor[right1]=speed;
+        motor[right2]=speed;
+        motor[right3]=speed;
+    }
+}
+
+void driveBackward(static float tiles, static int speed=90){
+
+    static float wheelRotations;
+
+    static int clicks;
+
+    wheelRotations = (tiles*24) / (wheelCircumference);
+
+    clicks = wheelRotations*360;
+
+    resetEncoders();
+
+    leftEnc=SensorValue[leftEncoder]*-1;
+
+    while(leftEnc<=clicks){
+
+        leftEnc=SensorValue[leftEncoder]*-1;
+
+        motor[left1]=speed*1;
+        motor[left2]=speed*1;
+        motor[left3]=speed*1;
+
+        motor[right1]=speed*-1;
+        motor[right2]=speed*-1;
+        motor[right3]=speed*-1;
+    }
+}
+
 void auton(){
-    
+
             autonInit();
 
 	        autonLCD();
 
             resetEncoders();
-            while(leftEnc<=1100){
 
-                leftEnc=SensorValue[leftEncoder]*1;
-                rightEnc=SensorValue[rightEncoder]*1;
-
-                // send to motor
-                motor[left1] = -90;
-                motor[left2] = -90;
-                motor[left3] = -90;
-
-                motor[right1] = 90;
-                motor[right2] = 90;
-                motor[right3] = 90;
-            }
+            driveForward(2.5);
 
             while(k<=10){
-                motor[intake1]=127;
-                motor[intake2]=127;
+                motor[intake1]=-127;
+                motor[intake2]=-127;
 
-                delayFunc(100);
                 k++;
             }
 
             motor[intake1]=0;
             motor[intake2]=0;
-/*
-            resetEncoders();
-            while(leftEnc<=1100){
 
-                leftEnc=SensorValue[leftEncoder]*-1;
-                rightEnc=SensorValue[rightEncoder]*1;
+            driveBackward(2.5);
 
-                    // send to motor
-                motor[left1] = 90;
-                motor[left2] = 90;
-                motor[left3] = 90;
-
-                motor[right1] = -90;
-                motor[right2] = -90;
-                motor[right3] = -90;
-            }
-
-            while(leftEnc<=200){
-
-                leftEnc=SensorValue[leftEncoder]*1;
-                rightEnc=SensorValue[rightEncoder]*1;
-
-                // send to motor
-                motor[left1] = -75;
-                motor[left2] = -75;
-                motor[left3] = -75;
-
-                motor[right1] = 75;
-                motor[right2] = 75;
-                motor[right3] = 75;
-            }
-
-            if(autonColor==red){
-                while(leftEnc<=600){
-                        leftEnc=SensorValue[leftEncoder]*-1;
-                        rightEnc=SensorValue[rightEncoder]*1;
-
-                    // send to motor
-                        motor[left1] = 75;
-                        motor[left2] = 75;
-                        motor[left3] = 75;
-
-                        motor[right1] = 75;
-                        motor[right2] = 75;
-                        motor[right3] = 75;                        
-                    }
-                    punch();
-            }else if(autonColor==blue){
-                while(leftEnc<=600){
-
-                        leftEnc=SensorValue[leftEncoder]*1;
-                        rightEnc=SensorValue[rightEncoder]*1;
-
-                    // send to motor
-                        motor[left1] = -75;
-                        motor[left2] = -75;
-                        motor[left3] = -75;
-
-                        motor[right1] = -75;
-                        motor[right2] = -75;
-                        motor[right3] = -75;
-                }                
-                punch();
-            }
-*/
 }//void end
 
 /*********************************************************************/
