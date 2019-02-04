@@ -165,7 +165,7 @@ void autonLCD(){
 
         if(autonPlatform==yes){
             displayNextLCDString("Platform");
-        }else
+        }else if(autonPlatform==no)
             displayNextLCDString("No Platform");
     }
 }
@@ -362,7 +362,7 @@ void driveTurn(static int turn, static int speed=75){
 
     resetEncoders();
 
-    static int clicks=600;
+    static int clicks=175;
 
     leftEnc=SensorValue[leftEncoder]*-1;
 
@@ -404,13 +404,15 @@ void auton(){
 
     startTask(intakeOnTask);
 
-    driveForward(2.5);
+    driveForward(1.5);
 
     delayFunc(500);
 
     intakeOff();
 
-    driveBackward(2.5);
+    driveBackward(2);
+
+    delayFunc(500);
 
     driveForward(.5);
 
@@ -423,27 +425,57 @@ void auton(){
     if(autonPos==front){
         punch();
     }else if(autonPos==back){
-        driveBackward(200);
+        driveBackward(.5);
         punch();
     }
 
     startTask(intakeOnTask);
 
     if(autonPos==front){
-        driveForward(600);
+        driveForward(.5);
         intakeOff();
         punch();
-        driveForward(200);
+        driveForward(1);
     }else if(autonPos==back){
-        driveBackward(600);
+        driveBackward(1.5);
         intakeOff();
         punch();
-        driveForward(200);
-        driveTurn(right);
-        driveBackward(200);
-        startTask(intakeOn);
-        driveForward(1100);
-        intakeOff();
+    }
+    if(autonPlatform==no){
+        if(autonPos==front){
+            driveBackward(1);
+            driveTurn(right);
+            startTask(intakeOn);
+            driveBackward(.5);
+            driveForward(1.5);
+            intakeOff();
+            driveBackward(1.5);
+            driveForward(.5);
+            driveTurn(left);
+            driveForward(1);
+            driveTurn(right);
+            driveBackward(.5);
+            startTask(intakeOn);
+            driveForward(1.5);
+            intakeOff();
+            driveTurn(left);
+            driveBackward(.5);
+            driveForward(2);
+        }else if(autonPos==back){
+            driveForward(.5);
+            driveTurn(right);
+            driveBackward(.5);
+            startTask(intakeOn);
+            driveForward(1.5);
+            intakeOff();
+            driveBackward(.5);
+            driveTurn(left);
+            driveBackward(.5);
+            startTask(intakeOn);
+            driveForward(.5);
+            delayFunc(500);
+            intakeOff();
+        }
     }
 
 }//void end
@@ -453,46 +485,8 @@ void skills(){
 	autonLCD();
     resetEncoders();
 
-    startTask(intakeOnTask);
-
-    driveForward(2.5);
-
-    delayFunc(500);
-
-    intakeOff();
-
-    driveBackward(2.5);
-
-    driveForward(.5);
-
-    driveTurn(right);
-
-    driveBackward(.5);
-    punch();
-
-    startTask(intakeOnTask);
-
-    driveBackward(1);
-    intakeOff();
-    punch();
-    driveForward(.5);
-    driveTurn(right);
-    driveBackward(.5);
-    startTask(intakeOn);
-    driveForward(2.5);
-    intakeOff();
-
-    driveBackward(1);
-
     driveTurn(left);
 
-    driveBackward(.5);
-    driveForward(2);
-
-    driveForward(2);
-
-    driveBackward(.5);
-//...    
 }
 
 /*********************************************************************/
