@@ -37,11 +37,15 @@
 /*********************************************************************/
 /*********************************************************************/
 
-int autonProg;
-
 int autonColor;
 
 int autonPos;
+
+int autonRun;
+
+int skillsRun;
+
+int autonPlatform;
 
 int back=0;
 
@@ -54,6 +58,10 @@ int blue=1;
 int left = 0;
 
 int right = 1;
+
+int no = 0;
+
+int yes = 1;
 
 //auton cutoffs
 int cutoffs[] = {0, 1024, 2048, 3072, 4096};
@@ -70,8 +78,6 @@ float pidRequestedValue;
 
 int leftEnc=SensorValue[leftEncoder]*-1;
 int rightEnc=SensorValue[rightEncoder]*-1;
-
-int k=0;
 
 /*********************************************************************/
 /*********************************************************************/
@@ -131,28 +137,36 @@ void autonLCD(){
 
     clearLCD();
 
-    setLCDPosition(0,0);
+    if(autonRun){
 
-    if(autonColor==0){
+        setLCDPosition(0,0);
 
-        displayNextLCDString("Color = Red");
+        if(autonColor==red){
 
-    }else if(autonColor==1){
+            displayNextLCDString("Red, ");
 
-        displayNextLCDString("Color = Blue");
+        }else if(autonColor==blue){
 
-    }
+            displayNextLCDString("Blue, ");
 
-    setLCDPosition(1,0);
+        }
 
-    if(autonPos==0){
+        if(autonPos==back){
 
-        displayNextLCDString("Pos = Back");
+            displayNextLCDString("Back");
 
-    }else if(autonPos==1){
+        }else if(autonPos==front){
 
-        displayNextLCDString("Pos = Front");
+            displayNextLCDString("Front");
 
+        }
+
+        setLCDPosition(1,0);
+
+        if(autonPlatform==yes){
+            displayNextLCDString("Platform");
+        }else
+            displayNextLCDString("No Platform");
     }
 }
 
@@ -173,6 +187,23 @@ void autonInit(){
     } else if (val1 >= cutoffs[3] && val1 < cutoffs[4]) {
         autonColor=blue;
         autonPos=back;
+    }
+
+	//auton menu
+    if (val2 >= cutoffs[0] && val2 < cutoffs[1]) {
+        autonRun=yes;
+        autonPlatform=yes;
+        skillsRun=no;
+    } else if (val2 >= cutoffs[1] && val2 < cutoffs[2]) {
+        autonRun=yes;
+        autonPlatform=no;
+        skillsRun=no;
+    } else if (val2 >= cutoffs[2] && val2 < cutoffs[3]) {
+        autonRun=no;
+        skillsRun=no;
+    } else if (val2 >= cutoffs[3] && val2 < cutoffs[4]) {
+        autonRun=no;
+        skillsRun=yes;
     }
 }
 
@@ -223,11 +254,24 @@ task intakeOnTask() {
     }
 }
 
+task intakeOn(){
+    while (true){
+        motor[intake1]=127;
+        motor[intake2]=127;
+    }
+}
+
 task intakeOffTask() {
     while (true){
         motor[intake1]=0;
         motor[intake2]=0;
     }
+}
+
+void intakeOff(){
+    stopTask(intakeOnTask);
+    startTask(intakeOffTask);
+    stopTask(intakeOffTask);
 }
 
 task puncherOnTask() {
@@ -244,7 +288,7 @@ void punch() {
 
     //puncher on
     startTask(puncherOnTask);
-    delayFunc(1000);
+    delayFunc(1500);
     stopTask(puncherOnTask);
     startTask(puncherOffTask);
     stopTask(puncherOffTask);
@@ -364,10 +408,7 @@ void auton(){
 
     delayFunc(500);
 
-    stopTask(intakeOnTask);
-
-    startTask(intakeOffTask);            
-    stopTask(intakeOffTask);
+    intakeOff();
 
     driveBackward(2.5);
 
@@ -379,7 +420,80 @@ void auton(){
         driveTurn(left);
     }
 
+    if(autonPos==front){
+        punch();
+    }else if(autonPos==back){
+        driveBackward(200);
+        punch();
+    }
+
+    startTask(intakeOnTask);
+
+    if(autonPos==front){
+        driveForward(600);
+        intakeOff();
+        punch();
+        driveForward(200);
+    }else if(autonPos==back){
+        driveBackward(600);
+        intakeOff();
+        punch();
+        driveForward(200);
+        driveTurn(right);
+        driveBackward(200);
+        startTask(intakeOn);
+        driveForward(1100);
+        intakeOff();
+    }
+
 }//void end
+
+void skills(){
+    autonInit();
+	autonLCD();
+    resetEncoders();
+
+    startTask(intakeOnTask);
+
+    driveForward(2.5);
+
+    delayFunc(500);
+
+    intakeOff();
+
+    driveBackward(2.5);
+
+    driveForward(.5);
+
+    driveTurn(right);
+
+    driveBackward(.5);
+    punch();
+
+    startTask(intakeOnTask);
+
+    driveBackward(1);
+    intakeOff();
+    punch();
+    driveForward(.5);
+    driveTurn(right);
+    driveBackward(.5);
+    startTask(intakeOn);
+    driveForward(2.5);
+    intakeOff();
+
+    driveBackward(1);
+
+    driveTurn(left);
+
+    driveBackward(.5);
+    driveForward(2);
+
+    driveForward(2);
+
+    driveBackward(.5);
+//...    
+}
 
 /*********************************************************************/
 /*********************************************************************/

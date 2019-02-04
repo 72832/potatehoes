@@ -101,7 +101,11 @@ void pre_auton() {
 /*********************************************************************/
 
 task autonomous() {
-	auton();
+    if(autonRun==yes)
+	    auton();
+	  else if(skillsRun==yes){
+	  	skills();
+		}
 }
 
 /*********************************************************************/
@@ -125,7 +129,11 @@ task usercontrol() {
 
     autonInit();
 
-    auton();
+    if(autonRun==yes)
+	    auton();
+	  else if(skillsRun==yes){
+	  	skills();
+		}
 
     while (true) {
       opcontrol();
