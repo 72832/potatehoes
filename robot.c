@@ -33,7 +33,7 @@
 #pragma systemFile
 
 /*---------------------------------------------------------------------------*/
-/*                                      9                                     */
+/*                                                                           */
 /*        Description: Competition template for VEX EDR                      */
 /*                                                                           */
 /*---------------------------------------------------------------------------*/
@@ -70,8 +70,8 @@
 
 #include "Vex_Competition_Includes.c"  // Main competition background code...do not modify!
 
+#include "include/PID.h"
 #include "include/API.h"
-
 
 /*********************************************************************/
 /*********************************************************************/
@@ -119,7 +119,6 @@ task autonomous() {
 /*********************************************************************/
 
 task usercontrol() {
-
     //display battery voltage
     lcdBattery();
 

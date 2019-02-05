@@ -55,10 +55,6 @@ int red=0;
 
 int blue=1;
 
-int left = 0;
-
-int right = 1;
-
 int no = 0;
 
 int yes = 1;
@@ -284,7 +280,6 @@ task puncherOffTask() {
 }
 
 void punch() {
-
     //puncher on
     startTask(puncherOnTask);
     delayFunc(1500);
@@ -301,105 +296,18 @@ void punch() {
 /*                                                                             */
 /*-----------------------------------------------------------------------------*/
 
-int wheelCircumference=4 /*diameter*/ * 3.1 /*PI simplified*/;
-
-void driveForward(static float tiles, static int speed=90){
-
-    static float wheelRotations;
-
-    static int clicks;
-
-    wheelRotations = (tiles*24) / (wheelCircumference);
-
-    clicks = wheelRotations*360;
-
-    resetEncoders();
-
-    while(leftEnc<=clicks){
-
-        leftEnc=SensorValue[leftEncoder];
-
-        motor[left1]=speed*-1;
-        motor[left2]=speed*-1;
-        motor[left3]=speed*-1;
-
-        motor[right1]=speed;
-        motor[right2]=speed;
-        motor[right3]=speed;
-    }
-}
-
-void driveBackward(static float tiles, static int speed=90){
-
-    static float wheelRotations;
-
-    static int clicks;
-
-    wheelRotations = (tiles*24) / (wheelCircumference);
-
-    clicks = wheelRotations*360;
-
-    resetEncoders();
-
-    leftEnc=SensorValue[leftEncoder]*-1;
-
-    while(leftEnc<=clicks){
-
-        leftEnc=SensorValue[leftEncoder]*-1;
-
-        motor[left1]=speed*1;
-        motor[left2]=speed*1;
-        motor[left3]=speed*1;
-
-        motor[right1]=speed*-1;
-        motor[right2]=speed*-1;
-        motor[right3]=speed*-1;
-    }
-}
-
-void driveTurn(static int turn, static int speed=75){
-
-    resetEncoders();
-
-    static int clicks=175;
-
-    leftEnc=SensorValue[leftEncoder]*-1;
-
-
-    if(turn==right){
-        while(leftEnc<=clicks){
-
-            leftEnc=SensorValue[leftEncoder]*1;
-
-            motor[left1]=speed * -1;
-            motor[left2]=speed * -1;
-            motor[left3]=speed * -1;
-
-            motor[right1]=speed * -1;
-            motor[right2]=speed * -1;
-            motor[right3]=speed * -1;
-        }
-    }else if(turn==left){
-        while(leftEnc<=clicks){
-
-            leftEnc=SensorValue[leftEncoder]*-1;
-
-            motor[left1]=speed * 1;
-            motor[left2]=speed * 1;
-            motor[left3]=speed * 1;
-
-            motor[right1]=speed * 1;
-            motor[right2]=speed * 1;
-            motor[right3]=speed * 1;
-        }
-    }
-}
 
 void auton(){
 
     autonInit();
 	autonLCD();
     resetEncoders();
+
+    if(autonPos==back){
+        punch();
+
+        driveBackward(.5);
+    }
 
     startTask(intakeOnTask);
 
@@ -409,24 +317,15 @@ void auton(){
 
     intakeOff();
 
-    driveBackward(2);
+    driveBackward(1.5);
 
     delayFunc(500);
 
-    driveForward(.5);
+    driveForward(.03);
 
-    if(autonColor==red){
-        driveTurn(right);
-    }else if(autonColor==blue){
-        driveTurn(left);
-    }
+    delayFunc(500);
 
-    if(autonPos==front){
-        punch();
-    }else if(autonPos==back){
-        driveBackward(.5);
-        punch();
-    }
+    intakeOff();
 
     startTask(intakeOnTask);
 
@@ -440,42 +339,6 @@ void auton(){
         intakeOff();
         punch();
     }
-    if(autonPlatform==no){
-        if(autonPos==front){
-            driveBackward(1);
-            driveTurn(right);
-            startTask(intakeOn);
-            driveBackward(.5);
-            driveForward(1.5);
-            intakeOff();
-            driveBackward(1.5);
-            driveForward(.5);
-            driveTurn(left);
-            driveForward(1);
-            driveTurn(right);
-            driveBackward(.5);
-            startTask(intakeOn);
-            driveForward(1.5);
-            intakeOff();
-            driveTurn(left);
-            driveBackward(.5);
-            driveForward(2);
-        }else if(autonPos==back){
-            driveForward(.5);
-            driveTurn(right);
-            driveBackward(.5);
-            startTask(intakeOn);
-            driveForward(1.5);
-            intakeOff();
-            driveBackward(.5);
-            driveTurn(left);
-            driveBackward(.5);
-            startTask(intakeOn);
-            driveForward(.5);
-            delayFunc(500);
-            intakeOff();
-        }
-    }
 
 }//void end
 
@@ -484,8 +347,7 @@ void skills(){
 	autonLCD();
     resetEncoders();
 
-    driveTurn(left);
-
+    startTask(intakeOnTask);
 }
 
 /*********************************************************************/
@@ -539,6 +401,12 @@ void opcontrol(){
     }
 
     if(vexRT[Btn7R]==1){
-        auton();
+        autonInit();
+
+        if(autonRun==yes)
+	        auton();
+	    else if(skillsRun==yes){
+	  	    skills();
+		}
     }
 }
