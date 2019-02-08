@@ -167,7 +167,7 @@ void autonLCD(){
 
         displayLCDString(1, 0, "Primary: ");
         sprintf(mainBattery, "%12f%c", nImmediateBatteryLevel / 10000, 'V'); //Build the value to be displayed
-        displayNextLCDString(mainBattery);        
+        displayNextLCDString(mainBattery);
     }
 }
 
@@ -449,19 +449,39 @@ void skills(){
 
 void auton(){
     autonInit();
-	autonLCD();
+		autonLCD();
     resetEncoders();
 
     startTask(intakeOnTask);
 
     punch();
 
-    delayFunc(500);
+    delayFunc(50);
 
     intakeOff();
-
-    driveForward(1.75);
-
+		if(autonPos==front){
+    	driveBackward(1.0);
+    	delayFunc(50);
+ 			if(autonColor==blue){
+ 				driveTurn(true, 7.75, 50);
+ 				delayFunc(50);
+ 			}else if(autonColor==red){
+ 				driveTurn(false, 7.75, 50);
+ 				delayFunc(50);
+ 			}
+ 			driveBackward(0.2);
+ 			delayFunc(50);
+ 			driveForward(1.0);
+ 			delayFunc(50);
+		}else if(autonPos==back){
+			if(autonColor==blue){
+				driveTurn(false, 3.325, 50);
+				delayFunc(50);
+			}else if(autonColor==red){
+				driveTurn(true, 3.325, 50);
+				delayFunc(50);
+			}
+  	}
 
 
 //try this
@@ -564,9 +584,6 @@ void opcontrol(){
 
 	if(vexRT[Btn6U]==1){
 		motor[puncher]=127;
-
-    }else if( vexRT[Btn6D]==1){
-		flip();
     }else{
 		motor[puncher]=0;
     }
@@ -582,10 +599,6 @@ void opcontrol(){
         waitUntil(vexRT[Btn7U]==0);
     }
 
-    if(vexRT[Btn8D]==1){
-        driveReverse=!driveReverse;
-    }
-
     if(vexRT[Btn7R]==1){
         autonInit();
 
@@ -594,5 +607,14 @@ void opcontrol(){
 	    else if(skillsRun==yes){
 	  	    skills();
 		}
-    }
+	}
+
+		if(vexRT[Btn6D]==1){
+			motor[flipper]=127;
+    }else if(vexRT[Btn8D]==1){
+    	motor[flipper]=-127;
+  	}else {
+  		motor[flipper]=0;
+  	}
+
 }
