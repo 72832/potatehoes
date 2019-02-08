@@ -111,6 +111,8 @@ void clearLCD() {
 
 //void lcd display voltage
 void lcdBattery() {
+    string mainBattery, backupBattery;
+
     clearLCD();
 
     //Display the Primary Robot battery voltage
@@ -128,6 +130,7 @@ void lcdBattery() {
 }
 
 void autonLCD(){
+    string mainBattery, backupBattery;
 
     bLCDBacklight=true;
 
@@ -149,20 +152,22 @@ void autonLCD(){
 
         if(autonPos==back){
 
-            displayNextLCDString("Back");
+            displayNextLCDString("Back, ");
 
         }else if(autonPos==front){
 
-            displayNextLCDString("Front");
+            displayNextLCDString("Front, ");
 
         }
 
-        setLCDPosition(1,0);
-
         if(autonPlatform==yes){
-            displayNextLCDString("Platform");
+            displayNextLCDString("P");
         }else if(autonPlatform==no)
-            displayNextLCDString("No Platform");
+            displayNextLCDString("No P");
+
+        displayLCDString(1, 0, "Primary: ");
+        sprintf(mainBattery, "%12f%c", nImmediateBatteryLevel / 10000, 'V'); //Build the value to be displayed
+        displayNextLCDString(mainBattery);        
     }
 }
 
@@ -282,10 +287,142 @@ task puncherOffTask() {
 void punch() {
     //puncher on
     startTask(puncherOnTask);
-    delayFunc(1500);
+    delayFunc(1000);
     stopTask(puncherOnTask);
     startTask(puncherOffTask);
     stopTask(puncherOffTask);
+}
+
+// PID using optical shaft encoder
+//
+// Shaft encoder has 360 pulses per revolution
+//
+
+
+#define PID_INTEGRAL_LIMIT  50
+
+// These could be constants but leaving
+// as variables allows them to be modified in the debugger "live"
+
+float wheelCircumference=4 /*diameter*/ * 3.141529 /*PI simplified*/;
+
+void driveForward(static float tiles, static int speed=75){
+
+    static float wheelRotations;
+
+    static float clicks;
+
+    wheelRotations = (tiles*24) / (wheelCircumference);
+
+    clicks = wheelRotations*360;
+
+    resetEncoders();
+
+    while(leftEnc<=clicks){
+
+        leftEnc=SensorValue[leftEncoder];
+
+        motor[left1]=speed*-1;
+        motor[left2]=speed*-1;
+        motor[left3]=speed*-1;
+
+        motor[right1]=speed;
+        motor[right2]=speed;
+        motor[right3]=speed;
+    }
+    motor[left1]=0;
+    motor[left2]=0;
+    motor[left3]=0;
+
+    motor[right1]=0;
+    motor[right2]=0;
+    motor[right3]=0;
+}
+
+void driveBackward(static float tiles, static int speed=75){
+
+    static float wheelRotations;
+
+    static float clicks;
+
+    wheelRotations = (tiles*24) / (wheelCircumference);
+
+    clicks = wheelRotations*360;
+
+    resetEncoders();
+
+    leftEnc=SensorValue[leftEncoder]*-1;
+
+    while(leftEnc<=clicks){
+
+        leftEnc=SensorValue[leftEncoder]*-1;
+
+        motor[left1]=speed*1;
+        motor[left2]=speed*1;
+        motor[left3]=speed*1;
+
+        motor[right1]=speed*-1;
+        motor[right2]=speed*-1;
+        motor[right3]=speed*-1;
+    }
+
+    motor[left1]=0;
+    motor[left2]=0;
+    motor[left3]=0;
+
+    motor[right1]=0;
+    motor[right2]=0;
+    motor[right3]=0;
+}
+
+void driveTurn(static bool left, static float inches, static int speed=75){
+
+    static float wheelRotations;
+
+    static float clicks;
+
+    wheelRotations = (inches) / (wheelCircumference);
+
+    clicks = wheelRotations*360;
+
+    resetEncoders();
+
+    if(left==true){
+        leftEnc=SensorValue[leftEncoder]*-1;
+
+        while(leftEnc<=clicks){
+            leftEnc=SensorValue[leftEncoder]*-1;
+
+            motor[left1]=speed;
+            motor[left2]=speed;
+            motor[left3]=speed;
+
+            motor[right1]=speed;
+            motor[right2]=speed;
+            motor[right3]=speed;
+        }
+    }else if(left==false){
+        leftEnc=SensorValue[leftEncoder]*1;
+
+        while(leftEnc<=clicks){
+            leftEnc=SensorValue[leftEncoder];
+
+            motor[left1]=speed*-1;
+            motor[left2]=speed*-1;
+            motor[left3]=speed*-1;
+
+            motor[right1]=speed*-1;
+            motor[right2]=speed*-1;
+            motor[right3]=speed*-1;
+        }
+    }
+    motor[left1]=0;
+    motor[left2]=0;
+    motor[left3]=0;
+
+    motor[right1]=0;
+    motor[right2]=0;
+    motor[right3]=0;
 }
 
 /*-----------------------------------------------------------------------------*/
@@ -296,59 +433,81 @@ void punch() {
 /*                                                                             */
 /*-----------------------------------------------------------------------------*/
 
-
-void auton(){
-
-    autonInit();
-	autonLCD();
-    resetEncoders();
-
-    if(autonPos==back){
-        punch();
-
-        driveBackward(.5);
-    }
-
-    startTask(intakeOnTask);
-
-    driveForward(1.5);
-
-    delayFunc(500);
-
-    intakeOff();
-
-    driveBackward(1.5);
-
-    delayFunc(500);
-
-    driveForward(.03);
-
-    delayFunc(500);
-
-    intakeOff();
-
-    startTask(intakeOnTask);
-
-    if(autonPos==front){
-        driveForward(.5);
-        intakeOff();
-        punch();
-        driveForward(1);
-    }else if(autonPos==back){
-        driveBackward(1.5);
-        intakeOff();
-        punch();
-    }
-
-}//void end
-
 void skills(){
     autonInit();
 	autonLCD();
     resetEncoders();
 
-    startTask(intakeOnTask);
+    driveForward(.2);
+
+    delayFunc(50);
+
+    driveTurn(false, 7.75, 50);
+
+    punch();
 }
+
+void auton(){
+    autonInit();
+	autonLCD();
+    resetEncoders();
+
+    startTask(intakeOnTask);
+
+    punch();
+
+    delayFunc(500);
+
+    intakeOff();
+
+    driveForward(1.75);
+
+
+
+//try this
+/*
+
+    startTask(intakeOnTask);
+
+    driveForward(0.9);
+
+    if(autonColor==blue){
+        driveTurn(true, 2.0, 50);
+    }else if(autonColor==red){
+        driveTurn(false, 2.0, 50);
+    }
+
+    delayFunc(500);
+
+    intakeOff();
+
+    punch();
+
+*/
+
+//and then try this
+/*
+
+    driveForward(.1);
+
+    delayFunc(500);
+
+    if(autonColor==blue){
+        driveTurn(false, 2.0, 50);
+    }else if(autonColor==red){
+        driveTurn(true, 2.0, 50);
+    }
+
+    driveForward(.1);
+
+    delayFunc(500);
+
+    driveBackward(2);
+*/
+
+}//void end
+
+
 
 /*********************************************************************/
 /*********************************************************************/
@@ -360,15 +519,37 @@ void skills(){
 /*********************************************************************/
 /*********************************************************************/
 
+void flip(){
+    while(vexRT[Btn6D]==1){
+        motor[flipper]=127;
+        if(vexRT[Btn6D]==0){
+            motor[flipper]=-127;
+            delayFunc(1000);
+        }
+    }
+    motor[flipper]=0;
+}
+
+bool driveReverse;
+
 void opcontrol(){
+    if(driveReverse==false){
+        SetMotor(left1,vexRT[Ch3]*-1);
+	    SetMotor(left2,vexRT[Ch3]*-1);
+        SetMotor(left3,vexRT[Ch3]*-1);
 
-    SetMotor(left1,vexRT[Ch3]*-1);
-	SetMotor(left2,vexRT[Ch3]*-1);
-    SetMotor(left3,vexRT[Ch3]*-1);
+        SetMotor(right1,vexRT[Ch2]);
+        SetMotor(right2,vexRT[Ch2]);
+	    SetMotor(right3,vexRT[Ch2]);
+    }else if(driveReverse==true){
+        SetMotor(left1,vexRT[Ch2]*1);
+	    SetMotor(left2,vexRT[Ch2]*1);
+        SetMotor(left3,vexRT[Ch2]*1);
 
-    SetMotor(right1,vexRT[Ch2]);
-    SetMotor(right2,vexRT[Ch2]);
-	SetMotor(right3,vexRT[Ch2]);
+        SetMotor(right1,vexRT[Ch3]*-1);
+        SetMotor(right2,vexRT[Ch3]*-1);
+	    SetMotor(right3,vexRT[Ch3]*-1);
+    }
 
 	if(vexRT[Btn5D]==1){
         motor[intake1]=127;
@@ -383,8 +564,9 @@ void opcontrol(){
 
 	if(vexRT[Btn6U]==1){
 		motor[puncher]=127;
+
     }else if( vexRT[Btn6D]==1){
-		motor[puncher]=-127;
+		flip();
     }else{
 		motor[puncher]=0;
     }
@@ -398,6 +580,10 @@ void opcontrol(){
     if(vexRT[Btn7U]==1){
         stopTask(autonomous);
         waitUntil(vexRT[Btn7U]==0);
+    }
+
+    if(vexRT[Btn8D]==1){
+        driveReverse=!driveReverse;
     }
 
     if(vexRT[Btn7R]==1){
