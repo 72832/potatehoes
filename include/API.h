@@ -449,7 +449,7 @@ void skills(){
 
 void auton(){
     autonInit();
-		autonLCD();
+    autonLCD();
     resetEncoders();
 
     startTask(intakeOnTask);
@@ -459,75 +459,63 @@ void auton(){
     delayFunc(50);
 
     intakeOff();
-		if(autonPos==front){
+	if(autonPos==front){
     	driveBackward(1.0);
     	delayFunc(50);
- 			if(autonColor==blue){
- 				driveTurn(true, 7.75, 50);
- 				delayFunc(50);
- 			}else if(autonColor==red){
- 				driveTurn(false, 7.75, 50);
- 				delayFunc(50);
- 			}
- 			driveBackward(0.2);
- 			delayFunc(50);
- 			driveForward(1.0);
- 			delayFunc(50);
-		}else if(autonPos==back){
+ 		if(autonPlatform==false){
+ 			punch();
+			startTask(intakeOnTask);
+			driveForward(1.75);
+			intakeOff();
+		}else if(autonPlatform==true){
+			punch();			
+			/*
+			driveBackward(.5);
+			
 			if(autonColor==blue){
-				driveTurn(false, 3.325, 50);
-				delayFunc(50);
+				driveTurn(false, 7.75, 50);
 			}else if(autonColor==red){
-				driveTurn(true, 3.325, 50);
-				delayFunc(50);
+				driveTurn(true,7.75, 50);
+			}			
+			
+			driveBackward(.3);
+			driveForward(1);
+			*/
+ 		}
+	}else if(autonPos==back){
+		if(autonPlatform==false){
+			punch();
+			driveBackward(.3);
+			startTask(intakeOnTask);
+			driveForward(1.5);
+			driveBackward(.5);
+			intakeOff();
+			
+		}else if(autonPlatform==true){
+			punch();
+/*			
+			if(autonColor==blue){
+				driveTurn(true, 4.5, 50);
+			}else if(autonColor==red){
+				driveTurn(false,4.5, 50);
+			}	
+			driveForward(.5);
+			
+			if(autonColor==blue){
+				driveTurn(true, 7.75, 50);
+			}else if(autonColor==red){
+				driveTurn(false,7.75, 50);
 			}
+			
+			driveBackward(.3);
+			
+			driveForward(1);
+*/			
+		}
   	}
 
 
-//try this
-/*
-
-    startTask(intakeOnTask);
-
-    driveForward(0.9);
-
-    if(autonColor==blue){
-        driveTurn(true, 2.0, 50);
-    }else if(autonColor==red){
-        driveTurn(false, 2.0, 50);
-    }
-
-    delayFunc(500);
-
-    intakeOff();
-
-    punch();
-
-*/
-
-//and then try this
-/*
-
-    driveForward(.1);
-
-    delayFunc(500);
-
-    if(autonColor==blue){
-        driveTurn(false, 2.0, 50);
-    }else if(autonColor==red){
-        driveTurn(true, 2.0, 50);
-    }
-
-    driveForward(.1);
-
-    delayFunc(500);
-
-    driveBackward(2);
-*/
-
 }//void end
-
-
 
 /*********************************************************************/
 /*********************************************************************/
@@ -538,17 +526,6 @@ void auton(){
 /*********************************************************************/
 /*********************************************************************/
 /*********************************************************************/
-
-void flip(){
-    while(vexRT[Btn6D]==1){
-        motor[flipper]=127;
-        if(vexRT[Btn6D]==0){
-            motor[flipper]=-127;
-            delayFunc(1000);
-        }
-    }
-    motor[flipper]=0;
-}
 
 bool driveReverse;
 
@@ -573,14 +550,15 @@ void opcontrol(){
 
 	if(vexRT[Btn5D]==1){
         motor[intake1]=127;
+		motor[intake1]=127;
 		motor[intake2]=127;
 	}else if(vexRT[Btn5U]==1){
 		motor[intake1]=-127;
-        motor[intake2]=-127;
-    }else{
-        motor[intake1]=0;
+	        motor[intake2]=-127;
+    	}else{
+        	motor[intake1]=0;
 		motor[intake2]=0;
-    }
+    	}
 
 	if(vexRT[Btn6U]==1){
 		motor[puncher]=127;
@@ -599,22 +577,11 @@ void opcontrol(){
         waitUntil(vexRT[Btn7U]==0);
     }
 
-    if(vexRT[Btn7R]==1){
-        autonInit();
-
-        if(autonRun==yes)
-	        auton();
-	    else if(skillsRun==yes){
-	  	    skills();
-		}
-	}
-
-		if(vexRT[Btn6D]==1){
-			motor[flipper]=127;
-    }else if(vexRT[Btn8D]==1){
+    if(vexRT[Btn8D]==1){
+	motor[flipper]=127;
+    }else if(vexRT[Btn6D]==1){
     	motor[flipper]=-127;
-  	}else {
-  		motor[flipper]=0;
-  	}
-
+    }else {
+  	motor[flipper]=0;
+    }
 }
