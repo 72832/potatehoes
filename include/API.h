@@ -438,13 +438,9 @@ void skills(){
 	autonLCD();
     resetEncoders();
 
-    driveForward(.2);
-
+    autonFront();
     delayFunc(50);
-
-    driveTurn(false, 7.75, 50);
-
-    punch();
+    driveForward(1);
 }
 
 void autonFront(){
@@ -471,10 +467,10 @@ void autonFront(){
 		}else if(autonColor==red){
 			driveTurn(true,7.75, 50);
 		}
-/*
+
 			driveBackward(.3);
 			driveForward(1);
-*/
+
  	}
     intakeOff();
 }//void end
@@ -502,11 +498,11 @@ void autonBack(){
 		}else if(autonColor==red){
 			driveTurn(true,7.75, 50);
 		}
-/*
+
 		driveBackward(.3);
 
 		driveForward(1);
-*/
+
 	}
     intakeOff();
 }

@@ -134,11 +134,7 @@ task usercontrol() {
     driveReverse=false;
 
     if(autonRun==yes){
-			if(autonPos==front){
-				autonFront();
-			}else if(autonPos==back){
-				autonBack();
-			}
+			auton();
 	  }else if(skillsRun==yes){
 	  	skills();
 		}
