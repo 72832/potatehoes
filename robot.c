@@ -101,9 +101,9 @@ void pre_auton() {
 /*********************************************************************/
 
 task autonomous() {
-    if(autonRun==yes)
-	    auton();
-	  else if(skillsRun==yes){
+    if(autonRun==yes){
+			auton();
+	  }else if(skillsRun==yes){
 	  	skills();
 		}
 }
@@ -133,9 +133,13 @@ task usercontrol() {
 
     driveReverse=false;
 
-    if(autonRun==yes)
-	    auton();
-	  else if(skillsRun==yes){
+    if(autonRun==yes){
+			if(autonPos==front){
+				autonFront();
+			}else if(autonPos==back){
+				autonBack();
+			}
+	  }else if(skillsRun==yes){
 	  	skills();
 		}
 

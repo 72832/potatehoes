@@ -60,7 +60,7 @@ int no = 0;
 int yes = 1;
 
 //auton cutoffs
-int cutoffs[] = {0, 1024, 2048, 3072, 4096};
+int cutoffs[] = {0, 512, 2048, 3584, 4096};
 
 //auton reading potentionmeters
 int val1 = SensorValue[posPotent];
@@ -447,7 +447,7 @@ void skills(){
     punch();
 }
 
-void auton(){
+void autonFront(){
     autonInit();
     autonLCD();
     resetEncoders();
@@ -458,64 +458,66 @@ void auton(){
 
     delayFunc(50);
 
-    intakeOff();
-	if(autonPos==front){
-    	driveBackward(1.0);
+ 	if(autonPlatform==false){
+        driveForward(1.75);
     	delayFunc(50);
- 		if(autonPlatform==false){
- 			punch();
-			startTask(intakeOnTask);
-			driveForward(1.75);
-			intakeOff();
-		}else if(autonPlatform==true){
-			punch();			
-			/*
-			driveBackward(.5);
-			
-			if(autonColor==blue){
-				driveTurn(false, 7.75, 50);
-			}else if(autonColor==red){
-				driveTurn(true,7.75, 50);
-			}			
-			
-			driveBackward(.3);
-			driveForward(1);
-			*/
- 		}
-	}else if(autonPos==back){
-		if(autonPlatform==false){
-			punch();
-			driveBackward(.3);
-			startTask(intakeOnTask);
-			driveForward(1.5);
-			driveBackward(.5);
-			intakeOff();
-			
-		}else if(autonPlatform==true){
-			punch();
-/*			
-			if(autonColor==blue){
-				driveTurn(true, 4.5, 50);
-			}else if(autonColor==red){
-				driveTurn(false,4.5, 50);
-			}	
-			driveForward(.5);
-			
-			if(autonColor==blue){
-				driveTurn(true, 7.75, 50);
-			}else if(autonColor==red){
-				driveTurn(false,7.75, 50);
-			}
-			
-			driveBackward(.3);
-			
-			driveForward(1);
-*/			
+	}else if(autonPlatform==true){
+        delayFunc(50);
+		driveBackward(.5);
+        delayFunc(50);
+
+		if(autonColor==blue){
+			driveTurn(false, 7.75, 50);
+		}else if(autonColor==red){
+			driveTurn(true,7.75, 50);
 		}
-  	}
-
-
+/*
+			driveBackward(.3);
+			driveForward(1);
+*/
+ 	}
+    intakeOff();
 }//void end
+
+void autonBack(){
+    autonInit();
+    autonLCD();
+    resetEncoders();
+
+    startTask(intakeOnTask);
+
+    punch();
+
+    delayFunc(50);
+
+	if(autonPlatform==false){
+        delayFunc(50);
+    }else if(autonPlatform==true){
+		punch();
+
+		driveForward(.5);
+
+		if(autonColor==blue){
+			driveTurn(false, 7.75, 50);
+		}else if(autonColor==red){
+			driveTurn(true,7.75, 50);
+		}
+/*
+		driveBackward(.3);
+
+		driveForward(1);
+*/
+	}
+    intakeOff();
+}
+
+void auton(){
+    if(autonPos==front){
+        autonFront();
+    }else if(autonPos==back){
+        autonBack();
+    }
+}
 
 /*********************************************************************/
 /*********************************************************************/
@@ -530,6 +532,8 @@ void auton(){
 bool driveReverse;
 
 void opcontrol(){
+    driveReverse=false;
+
     if(driveReverse==false){
         SetMotor(left1,vexRT[Ch3]*-1);
 	    SetMotor(left2,vexRT[Ch3]*-1);
@@ -583,5 +587,10 @@ void opcontrol(){
     	motor[flipper]=-127;
     }else {
   	motor[flipper]=0;
+    }
+
+    if(vexRT[Btn7D]==1){
+        waitUntil(vexRT[Btn7D]==0);
+        driveReverse=!driveReverse;
     }
 }
