@@ -70,7 +70,6 @@
 
 #include "Vex_Competition_Includes.c"  // Main competition background code...do not modify!
 
-
 #include "include/API.h"
 
 /*********************************************************************/
@@ -81,7 +80,7 @@
 
 /*********************************************************************/
 /*********************************************************************/
-/*********************************************************************/
+/********************************************\*************************/
 
 void pre_auton() {
     // Set bStopTasksBetweenModes to false if you want to keep user created tasks
@@ -90,22 +89,96 @@ void pre_auton() {
     init();
 }
 
-/*********************************************************************/
-/*********************************************************************/
-/*********************************************************************/
+task autonomous(){
+    resetEncoders();
 
-/** ------------------- 72832S autonomous functions -----------------*/
-
-/*********************************************************************/
-/*********************************************************************/
-/*********************************************************************/
-
-task autonomous() {
-    if(autonRun==yes){
-			auton();
-	  }else if(skillsRun==yes){
-	  	skills();
-		}
+    setLCDPosition(0,0);
+/*
+	//auton menu
+  if (val1 >= cutoffs[0] && val1 < cutoffs[1]) {
+	  	displayNextLCDString("Red, Back");
+	  	startTask(intakeOnTask);
+			delay();
+	    punch();
+	    delay();
+	    driveBackward(0.1);
+	    delay();
+	    driveTurn(false, 7.75, 50);
+	    delay();
+	    */
+	    startTask(intakeOnTask);
+//	    driveBackward(0.3);
+	    delay();
+			driveForward(1.75);
+			delayFunc(1000);
+			driveBackward(0.2);
+			delay();
+	    driveTurn(true, 11.0, 50);
+	    delay();
+	    driveForward(0.3);
+	    delay();
+	    punch();
+/*
+	    delay();
+	    driveTurn(false, 7.75, 50);
+	    delay();
+	    driveBackward(1);
+	    delay();
+	    driveTurn(true, 7.75, 50);
+	    delay();
+	    driveForward(1.5);*/
+/*  } else if (val1 >= cutoffs[1] && val1 < cutoffs[2]) {
+      displayNextLCDString("Red, Front");
+			startTask(intakeOnTask);
+			delay();
+		  punch();
+		  delay();
+		  driveTurn(false, 7.75, 50);
+		  delay();
+		  driveBackward(0.3);
+		  delay();
+			driveForward(1.5);
+			delay();
+		  driveTurn(true, 7.75, 50);
+		  delay();
+		  driveBackward(0.3);
+		  delay();
+		  driveForward(1.5);
+		  delay();
+		  punch();
+		  delay();
+		  driveForward(1.5);
+  } else if (val1 >= cutoffs[2] && val1 < cutoffs[3]) {
+      delay();
+      displayNextLCDString("Blue, Front");
+      startTask(intakeOnTask);
+			delayFunc(50);
+			driveForward(1.5);
+			delayFunc(50);
+			driveBackward(1.0);
+			delayFunc(50);
+			driveBackward(0.3);
+			delayFunc(50);
+			driveForward(0.3);
+			delayFunc(50);
+			driveTurn(false, 7.75, 50);
+			delayFunc(50);
+			punch();
+			delayFunc(50);
+			driveBackward(1.1);
+			delayFunc(50);
+			driveTurn(true, 13.5, 50);
+			delayFunc(50);
+			driveBackward(0.5);
+			delayFunc(50);
+			driveForward(1.75);
+			delayFunc(5000);
+			intakeOff();
+  } else if (val1 >= cutoffs[3] && val1 < cutoffs[4]) {
+      delay();
+      displayNextLCDString("Invalid Program...");
+  }
+  */
 }
 
 /*********************************************************************/
@@ -129,15 +202,7 @@ task usercontrol() {
 
     pidRunning=false;
 
-    autonInit();
-
     driveReverse=false;
-
-    if(autonRun==yes){
-			auton();
-	  }else if(skillsRun==yes){
-	  	skills();
-		}
 
     while (true) {
       opcontrol();

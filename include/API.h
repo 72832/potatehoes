@@ -37,27 +37,7 @@
 /*********************************************************************/
 /*********************************************************************/
 
-int autonColor;
-
-int autonPos;
-
-int autonRun;
-
-int skillsRun;
-
 int autonPlatform;
-
-int back=0;
-
-int front=1;
-
-int red=0;
-
-int blue=1;
-
-int no = 0;
-
-int yes = 1;
 
 //auton cutoffs
 int cutoffs[] = {0, 512, 2048, 3584, 4096};
@@ -92,6 +72,10 @@ void delayFunc(int time){
 void resetEncoders() {
     SensorValue[leftEncoder] = 0;
     SensorValue[rightEncoder] = 0;
+}
+
+void delay(){
+    delayFunc(50);
 }
 
 /*********************************************************************/
@@ -129,87 +113,7 @@ void lcdBattery() {
     wait1Msec(100);
 }
 
-void autonLCD(){
-    string mainBattery, backupBattery;
-
-    bLCDBacklight=true;
-
-    clearLCD();
-
-    if(autonRun){
-
-        setLCDPosition(0,0);
-
-        if(autonColor==red){
-
-            displayNextLCDString("Red, ");
-
-        }else if(autonColor==blue){
-
-            displayNextLCDString("Blue, ");
-
-        }
-
-        if(autonPos==back){
-
-            displayNextLCDString("Back, ");
-
-        }else if(autonPos==front){
-
-            displayNextLCDString("Front, ");
-
-        }
-
-        if(autonPlatform==yes){
-            displayNextLCDString("P");
-        }else if(autonPlatform==no)
-            displayNextLCDString("No P");
-
-        displayLCDString(1, 0, "Primary: ");
-        sprintf(mainBattery, "%12f%c", nImmediateBatteryLevel / 10000, 'V'); //Build the value to be displayed
-        displayNextLCDString(mainBattery);
-    }
-}
-
-void autonInit(){
-
-    resetEncoders();
-
-	//auton menu
-    if (val1 >= cutoffs[0] && val1 < cutoffs[1]) {
-        autonColor=red;
-        autonPos=back;
-    } else if (val1 >= cutoffs[1] && val1 < cutoffs[2]) {
-        autonColor=red;
-        autonPos=front;
-    } else if (val1 >= cutoffs[2] && val1 < cutoffs[3]) {
-        autonColor=blue;
-        autonPos=front;
-    } else if (val1 >= cutoffs[3] && val1 < cutoffs[4]) {
-        autonColor=blue;
-        autonPos=back;
-    }
-	//auton menu
-    if (val2 >= cutoffs[0] && val2 < cutoffs[1]) {
-        autonRun=yes;
-        autonPlatform=yes;
-        skillsRun=no;
-    } else if (val2 >= cutoffs[1] && val2 < cutoffs[2]) {
-        autonRun=yes;
-        autonPlatform=no;
-        skillsRun=no;
-    } else if (val2 >= cutoffs[2] && val2 < cutoffs[3]) {
-        autonRun=no;
-        skillsRun=no;
-    } else if (val2 >= cutoffs[3] && val2 < cutoffs[4]) {
-        autonRun=no;
-        skillsRun=yes;
-    }
-}
-
 void init() {
-
-    autonInit();
 
     // Set bStopTasksBetweenModes to false if you want to keep
     // user created tasks running between Autonomous and Driver
@@ -235,6 +139,9 @@ void init() {
     pidRunning=true;
 
     pidRequestedValue=0;
+
+    bLCDBacklight=true;
+
 }
 
 /*********************************************************************/
@@ -298,7 +205,6 @@ void punch() {
 // Shaft encoder has 360 pulses per revolution
 //
 
-
 #define PID_INTEGRAL_LIMIT  50
 
 // These could be constants but leaving
@@ -320,7 +226,7 @@ void driveForward(static float tiles, static int speed=75){
 
     while(leftEnc<=clicks){
 
-        leftEnc=SensorValue[leftEncoder];
+        leftEnc=SensorValue[leftEncoder]*-1;
 
         motor[left1]=speed*-1;
         motor[left2]=speed*-1;
@@ -351,11 +257,11 @@ void driveBackward(static float tiles, static int speed=75){
 
     resetEncoders();
 
-    leftEnc=SensorValue[leftEncoder]*-1;
+    leftEnc=SensorValue[leftEncoder]*1;
 
     while(leftEnc<=clicks){
 
-        leftEnc=SensorValue[leftEncoder]*-1;
+        leftEnc=SensorValue[leftEncoder]*1;
 
         motor[left1]=speed*1;
         motor[left2]=speed*1;
@@ -388,10 +294,10 @@ void driveTurn(static bool left, static float inches, static int speed=75){
     resetEncoders();
 
     if(left==true){
-        leftEnc=SensorValue[leftEncoder]*-1;
+        leftEnc=SensorValue[leftEncoder]*1;
 
         while(leftEnc<=clicks){
-            leftEnc=SensorValue[leftEncoder]*-1;
+            leftEnc=SensorValue[leftEncoder]*1;
 
             motor[left1]=speed;
             motor[left2]=speed;
@@ -402,10 +308,10 @@ void driveTurn(static bool left, static float inches, static int speed=75){
             motor[right3]=speed;
         }
     }else if(left==false){
-        leftEnc=SensorValue[leftEncoder]*1;
+        leftEnc=SensorValue[leftEncoder]*-1;
 
         while(leftEnc<=clicks){
-            leftEnc=SensorValue[leftEncoder];
+            leftEnc=SensorValue[leftEncoder]*-1;
 
             motor[left1]=speed*-1;
             motor[left2]=speed*-1;
@@ -433,87 +339,7 @@ void driveTurn(static bool left, static float inches, static int speed=75){
 /*                                                                             */
 /*-----------------------------------------------------------------------------*/
 
-void skills(){
-    autonInit();
-	autonLCD();
-    resetEncoders();
 
-    autonFront();
-    delayFunc(50);
-    driveForward(1);
-}
-
-void autonFront(){
-    autonInit();
-    autonLCD();
-    resetEncoders();
-
-    startTask(intakeOnTask);
-
-    punch();
-
-    delayFunc(50);
-
- 	if(autonPlatform==false){
-        driveForward(1.75);
-    	delayFunc(50);
-	}else if(autonPlatform==true){
-        delayFunc(50);
-		driveBackward(.5);
-        delayFunc(50);
-
-		if(autonColor==blue){
-			driveTurn(false, 7.75, 50);
-		}else if(autonColor==red){
-			driveTurn(true,7.75, 50);
-		}
-
-			driveBackward(.3);
-			driveForward(1);
-
- 	}
-    intakeOff();
-}//void end
-
-void autonBack(){
-    autonInit();
-    autonLCD();
-    resetEncoders();
-
-    startTask(intakeOnTask);
-
-    punch();
-
-    delayFunc(50);
-
-	if(autonPlatform==false){
-        delayFunc(50);
-    }else if(autonPlatform==true){
-		punch();
-
-		driveForward(.5);
-
-		if(autonColor==blue){
-			driveTurn(false, 7.75, 50);
-		}else if(autonColor==red){
-			driveTurn(true,7.75, 50);
-		}
-
-		driveBackward(.3);
-
-		driveForward(1);
-
-	}
-    intakeOff();
-}
-
-void auton(){
-    if(autonPos==front){
-        autonFront();
-    }else if(autonPos==back){
-        autonBack();
-    }
-}
 
 /*********************************************************************/
 /*********************************************************************/
@@ -549,16 +375,15 @@ void opcontrol(){
     }
 
 	if(vexRT[Btn5D]==1){
-        motor[intake1]=127;
 		motor[intake1]=127;
 		motor[intake2]=127;
 	}else if(vexRT[Btn5U]==1){
 		motor[intake1]=-127;
-	        motor[intake2]=-127;
-    	}else{
-        	motor[intake1]=0;
+	    motor[intake2]=-127;
+    }else{
+        motor[intake1]=0;
 		motor[intake2]=0;
-    	}
+    }
 
 	if(vexRT[Btn6U]==1){
 		motor[puncher]=127;
