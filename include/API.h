@@ -281,7 +281,9 @@ void driveBackward(static float tiles, static int speed=75){
     motor[right3]=0;
 }
 
-void driveTurn(static bool left, static float inches, static int speed=75){
+void driveTurn90(static bool left, static int speed=75){
+
+		//fixxxx
 
     static float wheelRotations;
 
