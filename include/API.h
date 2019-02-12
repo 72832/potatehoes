@@ -281,13 +281,15 @@ void driveBackward(static float tiles, static int speed=75){
     motor[right3]=0;
 }
 
-void driveTurn90(static bool left, static int speed=75){
+void driveTurn90(static bool left, static int speed=50){
 
-		//fixxxx
+	static float inches;
 
     static float wheelRotations;
 
     static float clicks;
+
+    inches=7.75;
 
     wheelRotations = (inches) / (wheelCircumference);
 

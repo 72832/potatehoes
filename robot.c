@@ -113,7 +113,7 @@ task autonomous(){
 			delayFunc(1000);
 			driveBackward(0.2);
 			delay();
-	    driveTurn(true, 11.0, 50);
+	    driveTurn90(true);
 	    delay();
 	    driveForward(0.3);
 	    delay();
