@@ -93,9 +93,8 @@ task autonomous(){
     resetEncoders();
 
     setLCDPosition(0,0);
-/*
 	//auton menu
-  if (val1 >= cutoffs[0] && val1 < cutoffs[1]) {
+//  if (val1 >= cutoffs[0] && val1 < cutoffs[1]) {
 	  	displayNextLCDString("Red, Back");
 	  	startTask(intakeOnTask);
 			delay();
@@ -103,11 +102,10 @@ task autonomous(){
 	    delay();
 	    driveBackward(0.1);
 	    delay();
-	    driveTurn(false, 7.75, 50);
+	    driveTurn90(false);
 	    delay();
-	    */
 	    startTask(intakeOnTask);
-//	    driveBackward(0.3);
+	    driveBackward(0.3);
 	    delay();
 			driveForward(1.75);
 			delayFunc(1000);
