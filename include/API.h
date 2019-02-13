@@ -347,7 +347,6 @@ void driveTurn(static bool left,static float inches, static int speed=50){
     clicks = wheelRotations*360;
 
     resetEncoders();
-
     if(left==true){
         leftEnc=SensorValue[leftEncoder]*1;
 
