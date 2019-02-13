@@ -177,6 +177,7 @@ task intakeOffTask() {
 
 void intakeOff(){
     stopTask(intakeOnTask);
+    stopTask(intakeOn);
     startTask(intakeOffTask);
     stopTask(intakeOffTask);
 }
@@ -290,6 +291,56 @@ void driveTurn90(static bool left, static int speed=50){
     static float clicks;
 
     inches=7.75;
+
+    wheelRotations = (inches) / (wheelCircumference);
+
+    clicks = wheelRotations*360;
+
+    resetEncoders();
+
+    if(left==true){
+        leftEnc=SensorValue[leftEncoder]*1;
+
+        while(leftEnc<=clicks){
+            leftEnc=SensorValue[leftEncoder]*1;
+
+            motor[left1]=speed;
+            motor[left2]=speed;
+            motor[left3]=speed;
+
+            motor[right1]=speed;
+            motor[right2]=speed;
+            motor[right3]=speed;
+        }
+    }else if(left==false){
+        leftEnc=SensorValue[leftEncoder]*-1;
+
+        while(leftEnc<=clicks){
+            leftEnc=SensorValue[leftEncoder]*-1;
+
+            motor[left1]=speed*-1;
+            motor[left2]=speed*-1;
+            motor[left3]=speed*-1;
+
+            motor[right1]=speed*-1;
+            motor[right2]=speed*-1;
+            motor[right3]=speed*-1;
+        }
+    }
+    motor[left1]=0;
+    motor[left2]=0;
+    motor[left3]=0;
+
+    motor[right1]=0;
+    motor[right2]=0;
+    motor[right3]=0;
+}
+
+void driveTurn(static bool left,static float inches, static int speed=50){
+
+    static float wheelRotations;
+
+    static float clicks;
 
     wheelRotations = (inches) / (wheelCircumference);
 

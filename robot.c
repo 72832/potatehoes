@@ -96,26 +96,27 @@ task autonomous(){
 	//auton menu
 //  if (val1 >= cutoffs[0] && val1 < cutoffs[1]) {
 	  	displayNextLCDString("Red, Back");
-	  	startTask(intakeOnTask);
 			delay();
 	    punch();
 	    delay();
-	    driveBackward(0.1);
+	    driveBackward(0.2);
 	    delay();
 	    driveTurn90(false);
 	    delay();
 	    startTask(intakeOnTask);
 	    driveBackward(0.3);
 	    delay();
-			driveForward(1.75);
-			delayFunc(1000);
-			driveBackward(0.2);
+			driveForward(1.75, 75);
 			delay();
-	    driveTurn90(true);
+			driveBackward(0.1);
+			delay();
+	    driveTurn(true,11.1,50);
 	    delay();
-	    driveForward(0.3);
-	    delay();
-	    punch();
+			punch();
+			delay();
+			driveForward(1.1);
+			intakeOff();
+
 /*
 	    delay();
 	    driveTurn(false, 7.75, 50);
