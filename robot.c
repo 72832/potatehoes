@@ -92,92 +92,142 @@ void pre_auton() {
 task autonomous(){
     resetEncoders();
 
-    setLCDPosition(0,0);
-	//auton menu
-//  if (val1 >= cutoffs[0] && val1 < cutoffs[1]) {
-	  	displayNextLCDString("Red, Back");
+    clearLCD();
+
+	if(autonRun){
+		//auton menu
+	  setLCDPosition(0,0);
+	  displayNextLCDString("Match Auton Run");
+	  setLCDPosition(1,0);
+	  if (val1 >= cutoffs[0] && val1 < cutoffs[1]) {
+			displayNextLCDString("Red, Back");
+	/*		delay();
+			startTask(intakeOnTask);
 			delay();
-	    punch();
+			driveForward(1.75);
+			delay();
+			driveBackward(1.5);
+			delayFunc(1000);
+			driveBackward(0.3);
+			delay();
+			driveForward(0.2);
+			delay();
+			driveturn90(true);
+			*/
+			delay();
+			driveForward(1.5);
+			delay();
+			driveTurn90(false);
+			delay();
+			driveBackward(0.3);
+			delay();
+			driveForward(1.5);
+			delay();
+	  } else if (val1 >= cutoffs[1] && val1 < cutoffs[2]) {
+	    displayNextLCDString("Red, Front");
 	    delay();
-	    driveBackward(0.2);
+	    startTask(intakeOnTask);//turn on intake task
+			delay();
+			punch();//top flag
+			delay();
+			driveBackward(0.1);//center
+			delay();
+			driveTurn90(false);//turn 90
+			delay();
+			driveBackward(0.3);//dead break
+			delay();
+			driveForward(1.75);//intake ball and toggle cap
+			delayFunc(1500); //wait to finish intaking ball
+			intakeOff(); //stop intake
+	  }else if (val1 >= cutoffs[2] && val1 < cutoffs[3]) {
 	    delay();
-	    driveTurn90(false);
+	    displayNextLCDString("Blue, Front");
 	    delay();
+	    startTask(intakeOnTask);//turn on intake task
+			delay();
+			punch();//top flag
+			delay();
+			driveBackward(0.1);//center
+			delay();
+			driveTurn90(true);//turn 90
+			delay();
+			driveBackward(0.3);//dead break
+			delay();
+			driveForward(1.75);//intake ball and toggle cap
+			delayFunc(1500); //wait to finish intaking ball
+			intakeOff(); //stop intake
+	  } else if (val1 >= cutoffs[3] && val1 < cutoffs[4]) {
+	    delay();
+	    displayNextLCDString("Blue, Back");
 	    startTask(intakeOnTask);
-	    driveBackward(0.3);
-	    delay();
-			driveForward(1.75, 75);
+	/*		delay();
+			driveForward(1.75);
+			delay();
+			driveBackward(1.5);
+			delayFunc(1000);
+			driveBackward(0.3);
+			delay();
+			driveForward(0.2);
+			delay();
+			driveturn90(true);
+			*/
+			delay();
+			driveForward(1.5);
+			delay();
+			driveTurn90(false);
+			delay();
+			driveBackward(0.3);
+			delay();
+			driveForward(1.5);
+			delay();
+	  }
+	}else if(skillsRun){
+		setLCDPosition(0,0);
+	  displayNextLCDString("Skills Auton Run");
+	  setLCDPosition(1,0);
+	/*		delay();
+			startTask(intakeOnTask);
+			delay();
+			driveForward(1.75);
+			delay();
+			driveBackward(1.5);
+			delayFunc(1000);
+			driveBackward(0.3);
+			delay();
+			driveForward(0.2);
+			delay();
+			driveturn90(true);
+			*/
+			delay();
+			driveForward(2.5);
+			delay();
+			driveTurn90(false);
+			delay();
+			driveBackward(0.3);
+			delay();
+			driveForward(0.2);
+			delay();
+			driveTurn90(true);
+			delay();
+			punch();
+			/*
 			delay();
 			driveBackward(0.1);
 			delay();
-	    driveTurn(true,11.1,50);
-	    delay();
-			punch();
+			driveTurn90(false);
 			delay();
-			driveForward(1.1);
-			intakeOff();
-
-/*
-	    delay();
-	    driveTurn(false, 7.75, 50);
-	    delay();
-	    driveBackward(1);
-	    delay();
-	    driveTurn(true, 7.75, 50);
-	    delay();
-	    driveForward(1.5);*/
-/*  } else if (val1 >= cutoffs[1] && val1 < cutoffs[2]) {
-      displayNextLCDString("Red, Front");
-			startTask(intakeOnTask);
-			delay();
-		  punch();
-		  delay();
-		  driveTurn(false, 7.75, 50);
-		  delay();
-		  driveBackward(0.3);
-		  delay();
-			driveForward(1.5);
-			delay();
-		  driveTurn(true, 7.75, 50);
-		  delay();
-		  driveBackward(0.3);
-		  delay();
-		  driveForward(1.5);
-		  delay();
-		  punch();
-		  delay();
-		  driveForward(1.5);
-  } else if (val1 >= cutoffs[2] && val1 < cutoffs[3]) {
-      delay();
-      displayNextLCDString("Blue, Front");
-      startTask(intakeOnTask);
-			delayFunc(50);
-			driveForward(1.5);
-			delayFunc(50);
-			driveBackward(1.0);
-			delayFunc(50);
 			driveBackward(0.3);
-			delayFunc(50);
-			driveForward(0.3);
-			delayFunc(50);
-			driveTurn(false, 7.75, 50);
-			delayFunc(50);
-			punch();
-			delayFunc(50);
-			driveBackward(1.1);
-			delayFunc(50);
-			driveTurn(true, 13.5, 50);
-			delayFunc(50);
-			driveBackward(0.5);
-			delayFunc(50);
+			delay();
 			driveForward(1.75);
-			delayFunc(5000);
+			delayFunc(1500);
 			intakeOff();
-  } else if (val1 >= cutoffs[3] && val1 < cutoffs[4]) {
-      delay();
-      displayNextLCDString("Invalid Program...");
-  }
-  */
+			*/
+	}else if(skillsRun==false && autonRun==false){
+		setLCDPosition(0,0);
+	  displayNextLCDString("Running Nothing");
+	  setLCDPosition(1,0);
+		delay(6);
+	}
 }
 
 /*********************************************************************/
@@ -192,7 +242,7 @@ task autonomous(){
 
 task usercontrol() {
 
-		string mainBattery, backupBattery;
+	string mainBattery, backupBattery;
 
     //display battery voltage
     lcdBattery();

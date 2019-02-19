@@ -50,10 +50,14 @@ string mainBattery, backupBattery;
 
 bool pidRunning=false;
 
+bool autonRun=false;
+bool skillsRun=false;
+
 float pidRequestedValue;
 
 int leftEnc=SensorValue[leftEncoder]*-1;
 int rightEnc=SensorValue[rightEncoder]*-1;
+
 
 /*********************************************************************/
 /*********************************************************************/
@@ -74,8 +78,12 @@ void resetEncoders() {
     SensorValue[rightEncoder] = 0;
 }
 
-void delay(){
-    delayFunc(50);
+void delay(static int i = 1){
+    static int p = 0;
+    while(p<i){
+        delayFunc(250);
+        p++;
+    }
 }
 
 /*********************************************************************/
@@ -113,6 +121,48 @@ void lcdBattery() {
     wait1Msec(100);
 }
 
+int btnLcdMenu(){
+	clearLCD();
+	setLCDPosition(0,0);
+	displayNextLCDString("Program Select");
+	setLCDPosition(1,0);
+	displayNextLCDString("Match  No  Skill");
+	waitUntil(nLCDButtons != 0);
+	if(nLCDButtons>5){
+		clearLCD();
+		setLCDPosition(0,0);
+		displayNextLCDString("Selection  Error");		
+		return false;
+	}else if(nLCDButtons==3){
+		clearLCD();
+		setLCDPosition(0,0);
+		displayNextLCDString("Selection  Error");			
+		return false;
+	}else if(nLCDButtons==1){
+		clearLCD();
+		setLCDPosition(0,0);
+		displayNextLCDString(">Running  Match<");				
+		autonRun=true;
+		return true;
+	}else if(nLCDButtons==2){
+		clearLCD();
+		setLCDPosition(0,0);
+		displayNextLCDString("Running  Nothing");					
+		autonRun=false;
+		skillsRun=false;
+		return true;
+	}else if(nLCDButtons==4){
+		clearLCD();
+		setLCDPosition(0,0);
+		displayNextLCDString(">Program Select<");
+		setLCDPosition(1,0);
+		displayNextLCDString(">Running Skills<");						
+		skillsRun=true;
+		return true;
+	}else
+		return false;
+}
+
 void init() {
 
     // Set bStopTasksBetweenModes to false if you want to keep
@@ -141,6 +191,11 @@ void init() {
     pidRequestedValue=0;
 
     bLCDBacklight=true;
+
+    
+    waitUntil(btnLcdMenu());
+    
+    delayFunc(100);
 
 }
 
@@ -290,7 +345,7 @@ void driveTurn90(static bool left, static int speed=50){
 
     static float clicks;
 
-    inches=7.75;
+    inches=10.3;
 
     wheelRotations = (inches) / (wheelCircumference);
 
@@ -443,17 +498,6 @@ void opcontrol(){
 		motor[puncher]=127;
     }else{
 		motor[puncher]=0;
-    }
-
-    if(vexRT[Btn7D]==1){
-        init();
-        startTask(autonomous);
-        waitUntil(vexRT[Btn7D]==0);
-    }
-
-    if(vexRT[Btn7U]==1){
-        stopTask(autonomous);
-        waitUntil(vexRT[Btn7U]==0);
     }
 
     if(vexRT[Btn8D]==1){
