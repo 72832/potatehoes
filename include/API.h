@@ -191,7 +191,6 @@ void init() {
     pidRequestedValue=0;
 
     bLCDBacklight=true;
-
     
     waitUntil(btnLcdMenu());
     
