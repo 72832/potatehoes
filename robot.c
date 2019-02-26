@@ -66,7 +66,9 @@
 /*********************************************************************/
 /*********************************************************************/
 
-#include "cleanerDirectory/jpearman/SmartMotorLib.c"
+#include "include/jpearman/SmartMotorLib.c"
+
+#include "include/BNSLibrary/BNSLib.h"
 
 #include "Vex_Competition_Includes.c"  // Main competition background code...do not modify!
 
@@ -90,9 +92,16 @@ void pre_auton() {
 }
 
 task autonomous(){
+	/*
+	pidReqVal=1050;
+	startTask(pidPos);
+	delayFunc(10000);
+*/
     resetEncoders();
 
     clearLCD();
+
+    delay(4);
 
 	if(autonRun){
 		//auton menu
@@ -101,133 +110,118 @@ task autonomous(){
 	  setLCDPosition(1,0);
 	  if (val1 >= cutoffs[0] && val1 < cutoffs[1]) {
 			displayNextLCDString("Red, Back");
-	/*		delay();
+			delay();
 			startTask(intakeOnTask);
-			delay();
 			driveForward(1.75);
 			delay();
-			driveBackward(1.5);
-			delayFunc(1000);
-			driveBackward(0.3);
-			delay();
-			driveForward(0.2);
-			delay();
-			driveturn90(true);
-			*/
-			delay();
-			driveForward(1.5);
-			delay();
-			driveTurn90(false);
-			delay();
-			driveBackward(0.3);
-			delay();
-			driveForward(1.5);
-			delay();
-	  } else if (val1 >= cutoffs[1] && val1 < cutoffs[2]) {
-	    displayNextLCDString("Red, Front");
-	    delay();
-	    startTask(intakeOnTask);//turn on intake task
-			delay();
-			punch();//top flag
-			delay();
-			driveBackward(0.1);//center
-			delay();
-			driveTurn90(false);//turn 90
-			delay();
-			driveBackward(0.3);//dead break
-			delay();
-			driveForward(1.75);//intake ball and toggle cap
-			delayFunc(1500); //wait to finish intaking ball
-			intakeOff(); //stop intake
-	  }else if (val1 >= cutoffs[2] && val1 < cutoffs[3]) {
-	    delay();
-	    displayNextLCDString("Blue, Front");
-	    delay();
-	    startTask(intakeOnTask);//turn on intake task
-			delay();
-			punch();//top flag
-			delay();
-			driveBackward(0.1);//center
-			delay();
-			driveTurn90(true);//turn 90
-			delay();
-			driveBackward(0.3);//dead break
-			delay();
-			driveForward(1.75);//intake ball and toggle cap
-			delayFunc(1500); //wait to finish intaking ball
-			intakeOff(); //stop intake
-	  } else if (val1 >= cutoffs[3] && val1 < cutoffs[4]) {
-	    delay();
-	    displayNextLCDString("Blue, Back");
-	    startTask(intakeOnTask);
-	/*		delay();
-			driveForward(1.75);
-			delay();
-			driveBackward(1.5);
-			delayFunc(1000);
-			driveBackward(0.3);
-			delay();
-			driveForward(0.2);
-			delay();
-			driveturn90(true);
-			*/
-			delay();
-			driveForward(1.5);
-			delay();
-			driveTurn90(false);
-			delay();
-			driveBackward(0.3);
-			delay();
-			driveForward(1.5);
-			delay();
-	  }
-	}else if(skillsRun){
-		setLCDPosition(0,0);
-	  displayNextLCDString("Skills Auton Run");
-	  setLCDPosition(1,0);
-	/*		delay();
-			startTask(intakeOnTask);
-			delay();
-			driveForward(1.75);
-			delay();
-			driveBackward(1.5);
-			delayFunc(1000);
-			driveBackward(0.3);
-			delay();
-			driveForward(0.2);
-			delay();
-			driveturn90(true);
-			*/
-			delay();
-			driveForward(2.5);
-			delay();
-			driveTurn90(false);
-			delay();
-			driveBackward(0.3);
-			delay();
-			driveForward(0.2);
+			driveBackward(0.2);
 			delay();
 			driveTurn90(true);
 			delay();
+			driveForward(1.2);
+			delay();
+			intakeOff();
+	  } else if (val1 >= cutoffs[1] && val1 < cutoffs[2]) {
+	    displayNextLCDString("Red, Front");
 			punch();
-			/*
 			delay();
 			driveBackward(0.1);
 			delay();
 			driveTurn90(false);
 			delay();
-			driveBackward(0.3);
+			driveBackward(0.1);
 			delay();
-			driveForward(1.75);
-			delayFunc(1500);
+			driveForward(1.5);
+			delay();
+			startTask(intakeOnTask);
+			delay();
+			driveBackward(0.2);
+			delay();
+			driveTurn90(true);
+			delay();
+			driveForward(1.3);
+			delay();
 			intakeOff();
-			*/
+		}else if(val1 >= cutoffs[2] && val1 < cutoffs[3]){
+	    displayNextLCDString("Blue, Front");
+	    startTask(intakeOnTask);
+			punch();
+			delay();
+			driveBackward(0.1);
+			delay();
+			driveTurn90(true);
+			delay();
+			driveBackward(0.1);
+			delay();
+			driveForward(1.5);
+			delay();
+			startTask(intakeOnTask);
+			delay();
+			driveBackward(0.2);
+			delay();
+			driveTurn90(true);
+			delay();
+			driveForward(1.3);
+			delay();
+			intakeOff();
+
+		}else if (val1 >= cutoffs[3] && val1 < cutoffs[4]) {
+	    delay();
+	    displayNextLCDString("Blue, Back");
+	    startTask(intakeOnTask);
+	    delay();
+			driveForward(1.75);
+			delay();
+			driveBackward(0.2);
+			delay();
+			driveTurn90(false);
+			delay();
+			driveForward(1.2);
+			delay();
+			intakeOff();
+	  }
+	}else if(skillsRun){
+		setLCDPosition(0,0);
+	  displayNextLCDString("Skills Auton Run");
+	  setLCDPosition(1,0);
+
+	  //SKILLS MVP(most valuable player) TEST #1
+
+	  //SKILLS MVP(minimum viable product)
+			punch();
+			delay();
+			delay();
+			delay();
+			delay();
+			driveBackward(1.0);
+			delay();
+			delay();
+			delay();
+			delay();
+			delay();
+			driveTurn90(true);
+			delay();
+			delay();
+			delay();
+			delay();
+			delay();
+			driveBackward(0.2);
+			delay();
+			delay();
+			delay();
+			delay();
+			delay();
+			driveForward(3.2);
+
+			//intake Off
+			intakeOff();
 	}else if(skillsRun==false && autonRun==false){
 		setLCDPosition(0,0);
 	  displayNextLCDString("Running Nothing");
 	  setLCDPosition(1,0);
 		delay(6);
 	}
+//	*/
 }
 
 /*********************************************************************/
@@ -241,6 +235,24 @@ task autonomous(){
 /*********************************************************************/
 
 task usercontrol() {
+
+	stopTask(autonomous);
+
+	intakeOff();
+
+	    // Initialize the Smart Motor Library
+    SmartMotorsInit();
+
+    // Define which motors are linked
+
+    // Declare that you want the Library to keep a lid on the
+    // motors by measuring the temperature of the PTC components
+    SmartMotorPtcMonitorEnable();
+
+    // Run smart motors
+    SmartMotorRun();
+    SmartMotorsInit();
+    SmartMotorRun();
 
 	string mainBattery, backupBattery;
 
@@ -257,5 +269,4 @@ task usercontrol() {
       opcontrol();
     }
 }
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
