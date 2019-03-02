@@ -48,24 +48,15 @@ int val2 = SensorValue[progPotent];
 
 string mainBattery, backupBattery;
 
+bool pidRunning=false;
+
 bool autonRun=false;
 bool skillsRun=false;
 
+float pidRequestedValue;
 
-  // The PID controller that will be used
-  // The basic usage of this PID controller is as following:
-  //
-  // PID pid1;
-  // PIDInit(&pid1, PConstant, IConstant, DConstant);
-  // float feedback = PIDCompute(&pid1, your_error);
-  //
-  
-  PID pid1;
-  PIDInit(&pid1, 0.1, 0, 0.1); // Set P, I, and D constants
-  
-  // We start at 0 units and want to reach 100 units
-  float motorSpeed = 0;
-  float targetMotorSpeed = 100;
+int leftEnc=SensorValue[leftEncoder]*-1;
+int rightEnc=SensorValue[rightEncoder]*-1;
 
 
 /*********************************************************************/
@@ -201,6 +192,122 @@ void init() {
 /*********************************************************************/
 /*********************************************************************/
 
+// PID using optical shaft encoder
+//
+// Shaft encoder has 360 pulses per revolution
+//
+
+#define PID_MOTOR_SCALE     -1
+
+#define PID_INTEGRAL_LIMIT  50
+
+// These could be constants but leaving
+// as variables allows them to be modified in the debugger "live"
+
+int limit;
+int pidReqVal;
+
+task pidPos(){
+    static float Kp=1.0;
+    static float Ki=0.0;
+    static float Kd=0.0;
+
+    static float  pidSensorCurrentValue;
+
+    static float  pidError;
+    static float  pidLastError;
+    static float  pidIntegral;
+    static float  pidDerivative;
+    static float  pidDrive;
+
+    pidLastError  = 0;
+    pidIntegral   = 0;
+
+    while( pidRunning==true ){
+            // Read the sensor value and scale
+        pidSensorCurrentValue = SensorValue[leftEncoder]*-1;
+
+            // calculate error
+        pidError = pidSensorCurrentValue - pidReqVal;
+
+            // integral - if Ki is not 0
+        if( Ki != 0 ){
+                // If we are inside controlable window then integrate the error
+            if( abs(pidError) < PID_INTEGRAL_LIMIT )
+                pidIntegral = pidIntegral + pidError;
+            else
+                pidIntegral = 0;
+            }
+        else
+            pidIntegral = 0;
+
+            // calculate the derivative
+        pidDerivative = pidError - pidLastError;
+        pidLastError  = pidError;
+
+            // calculate drive
+        pidDrive = (Kp * pidError) + (Ki * pidIntegral) + (Kd * pidDerivative);
+/*
+        if(pidReqVal<=350/*less than or equal to 12 inches*///){
+//            limit=limit+1;
+//            if (limit>60){
+  //              limit=60;
+    //        }
+      //  }else if(350<pidReqVal<=1050/*between 12 and 36 inches*/){
+//            limit=limit+2;
+  //          if (limit>90){
+    //            limit=90;
+      //      }
+        //}else if(1050<pidReqVal/*greater than 36 inches*/){
+//            limit=limit+1;
+  //          if (limit>127){
+    //            limit=127;
+      //      }
+        //}
+
+        limit=90;
+
+            // limit drive
+        if( pidDrive > limit )
+            pidDrive = limit;
+        if( pidDrive < -limit )
+            pidDrive = -limit;
+
+            // send to motor
+        motor[left1] = pidDrive*-1;
+        motor[left2] = pidDrive*-1;
+        motor[left3] = pidDrive*-1;
+
+        motor[right1]=pidDrive;
+        motor[right2]=pidDrive;
+        motor[right3]=pidDrive;
+
+        if(pidDrive==0){
+            pidRunning=false;
+        }
+
+        else{
+            // clear all
+            pidError      = 0;
+            pidLastError  = 0;
+            pidIntegral   = 0;
+            pidDerivative = 0;
+
+            // send to motor
+            motor[left1] = 0;
+            motor[left2] = 0;
+            motor[left3] = 0;
+
+            motor[right1] = 0;
+            motor[right2] = 0;
+            motor[right3] = 0;
+            }
+
+        // Run at 50Hz
+        wait1Msec( 50 );
+        }
+}
+
 task intakeOnTask() {
     while (true){
         motor[intake1]=-127;
@@ -257,47 +364,6 @@ void punch() {
 // as variables allows them to be modified in the debugger "live"
 
 float wheelCircumference=4 /*diameter*/ * 3.141529 /*PI simplified*/;
-
-void driveForward(static float tiles, static int speed=75){
-
-    static float wheelRotations;
-
-    static float clicks;
-
-    wheelRotations = (tiles*24) / (wheelCircumference);
-
-    clicks = wheelRotations*360;
-
-    resetEncoders();
-  // Output instructions to view the PID response
-  writeDebugStreamLine("*** Copy/paste all the results in the debug window to Excel and graph what the PID response looks like! ***");
-
-  // Loop through many times so we can graph
-  //  the PID loop
-  for(int i = 0; i < 200; i++){
-    // This calculates how far off we are from the true value
-    //  The PID will return a response that will hopefully minimize this error over time
-    float pidResult = PIDCompute(&pid1, targetMotorSpeed - motorSpeed);
-
-    // Add pid to motor value
-    motorSpeed = pidResult;
-
-    writeDebugStreamLine("%f", motorSpeed);
-
-    // There is a bug in RobotC where if you print too fast,
-    //   you might get weird characters at random
-    delay(1);
-  }
-
-
-    motor[left1]=0;
-    motor[left2]=0;
-    motor[left3]=0;
-
-    motor[right1]=0;
-    motor[right2]=0;
-    motor[right3]=0;
-}
 
 /*-----------------------------------------------------------------------------*/
 /*                                                                             */
