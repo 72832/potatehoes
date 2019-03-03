@@ -58,6 +58,8 @@ float pidRequestedValue;
 int leftEnc=SensorValue[leftEncoder]*-1;
 int rightEnc=SensorValue[rightEncoder]*-1;
 
+float pidReqVal;
+
 
 /*********************************************************************/
 /*********************************************************************/
@@ -180,6 +182,57 @@ void init() {
     autonRun=true;
 
     BNS();
+
+    PID pid1;
+    PIDInit(&pid1, 1.0, 0.0, 0.0); // Set P, I, and D constants
+
+    // We start at 0 units and want to reach 100 units
+    float pidSensorCurrentValue;
+    float pidReqVal = -500;
+
+    	// Motion Profile object
+	MotionProfile ramp1;
+	MotionProfileInit(&ramp1);
+
+	// Initiate the motion profile
+	// It is very important that the paramters get set correctly,
+	//  otherwise you'll likely get a "IMPOSSIBLE TO REACH LOCATION"
+	//  error on your debug stream.
+	// Be sure, if you initial velocity is LESS then your max velocity,
+	//  to set the acceleration to positive, otherwise negative. Same goes
+	//  for max to end velocity as well.  (Think, are you increasing in speed
+	//  to reach the next velocity?  Then positive acceleration)
+	// Be sure if you want your distance to be positive, the max velocity
+	//  is set the same, positive.  And the opposite for negatives.
+	// Use MotionProfilePrint(&prof1, #.##); to see the motion profile will
+	//  execute on the debug stream
+	//
+	// ADVANCED PARAMS SETTING:
+	//
+	// Forward:
+	// MotionProfileSetAccel(&prof1, 0.5, -1); // Accel = 0.5, decel = -1
+	// MotionProfileSetDistance(&prof1, 500); // Distance = 1200
+	// MotionProfileSetVelocity(&prof1, 0, 15, 0); // V_0 = 0, V_max = 15, V_exit = 0
+	//
+	// Backward:
+	// MotionProfileSetAccel(&prof1, -0.5, 1); // Accel = -0.5, decel = 1
+	// MotionProfileSetDistance(&prof1, -500); // Distance = -1200
+	// MotionProfileSetVelocity(&prof1, 0, -15, 0); // V_0 = 0, V_max = -15, V_exit = 0
+	//
+	// SIMPLE PARAMS SETTING:
+	//
+	// Forward:
+  	// MotionProfileEasyParams(&ramp1, 1.0, 15.0, 1000.0); // Acceleration of 1, Velocity of 15, and distance of 1200
+	//
+	// Backward:
+	// MotionProfileEasyParams(&prof1, 1.0, 15.0, -1200.0);
+	//
+
+	// "Execute" motion profile by printing the velocities to the screen
+	float time = 0;
+	float dt = 1; // Update rate: in this instance once per second
+
+
 }
 
 /*********************************************************************/
@@ -204,108 +257,14 @@ void init() {
 // These could be constants but leaving
 // as variables allows them to be modified in the debugger "live"
 
-int limit;
-int pidReqVal;
+void driveFunc(int val){
+    motor[right1]=val*-1;
+    motor[right2]=val*-1;
+    motor[right3]=val*-1;
 
-task pidPos(){
-    static float Kp=1.0;
-    static float Ki=0.0;
-    static float Kd=0.0;
-
-    static float  pidSensorCurrentValue;
-
-    static float  pidError;
-    static float  pidLastError;
-    static float  pidIntegral;
-    static float  pidDerivative;
-    static float  pidDrive;
-
-    pidLastError  = 0;
-    pidIntegral   = 0;
-
-    while( pidRunning==true ){
-            // Read the sensor value and scale
-        pidSensorCurrentValue = SensorValue[leftEncoder]*-1;
-
-            // calculate error
-        pidError = pidSensorCurrentValue - pidReqVal;
-
-            // integral - if Ki is not 0
-        if( Ki != 0 ){
-                // If we are inside controlable window then integrate the error
-            if( abs(pidError) < PID_INTEGRAL_LIMIT )
-                pidIntegral = pidIntegral + pidError;
-            else
-                pidIntegral = 0;
-            }
-        else
-            pidIntegral = 0;
-
-            // calculate the derivative
-        pidDerivative = pidError - pidLastError;
-        pidLastError  = pidError;
-
-            // calculate drive
-        pidDrive = (Kp * pidError) + (Ki * pidIntegral) + (Kd * pidDerivative);
-/*
-        if(pidReqVal<=350/*less than or equal to 12 inches*///){
-//            limit=limit+1;
-//            if (limit>60){
-  //              limit=60;
-    //        }
-      //  }else if(350<pidReqVal<=1050/*between 12 and 36 inches*/){
-//            limit=limit+2;
-  //          if (limit>90){
-    //            limit=90;
-      //      }
-        //}else if(1050<pidReqVal/*greater than 36 inches*/){
-//            limit=limit+1;
-  //          if (limit>127){
-    //            limit=127;
-      //      }
-        //}
-
-        limit=90;
-
-            // limit drive
-        if( pidDrive > limit )
-            pidDrive = limit;
-        if( pidDrive < -limit )
-            pidDrive = -limit;
-
-            // send to motor
-        motor[left1] = pidDrive*-1;
-        motor[left2] = pidDrive*-1;
-        motor[left3] = pidDrive*-1;
-
-        motor[right1]=pidDrive;
-        motor[right2]=pidDrive;
-        motor[right3]=pidDrive;
-
-        if(pidDrive==0){
-            pidRunning=false;
-        }
-
-        else{
-            // clear all
-            pidError      = 0;
-            pidLastError  = 0;
-            pidIntegral   = 0;
-            pidDerivative = 0;
-
-            // send to motor
-            motor[left1] = 0;
-            motor[left2] = 0;
-            motor[left3] = 0;
-
-            motor[right1] = 0;
-            motor[right2] = 0;
-            motor[right3] = 0;
-            }
-
-        // Run at 50Hz
-        wait1Msec( 50 );
-        }
+    motor[left1]=val;
+    motor[left2]=val;
+    motor[left3]=val;
 }
 
 task intakeOnTask() {

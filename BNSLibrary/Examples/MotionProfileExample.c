@@ -67,7 +67,7 @@ task main()
 	// SIMPLE PARAMS SETTING:
 	//
 	// Forward:
-	MotionProfileEasyParams(&prof1, 1.0, 15.0, 1200.0); // Acceleration of 1, Velocity of 15, and distance of 1200
+	MotionProfileEasyParams(&prof1, 1.0, 15.0, 500.0); // Acceleration of 1, Velocity of 15, and distance of 1200
 	//
 	// Backward:
 	// MotionProfileEasyParams(&prof1, 1.0, 15.0, -1200.0);
