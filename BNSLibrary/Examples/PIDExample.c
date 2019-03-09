@@ -45,14 +45,6 @@ task main()
   PID pid1;
   PIDInit(&pid1, 0.1, 0, 0.1); // Set P, I, and D constants
 
-  // This helps simulate a fake robot for the purpose of this demo
-  float momentum = 0;
-  float kMomentum = 0.2;
-
-  // We start at 0 units and want to reach 100 units
-  float motorSpeed = 0;
-  float targetMotorSpeed = 100;
-
   // Output instructions to view the PID response
   writeDebugStreamLine("*** Copy/paste all the results in the debug window to Excel and graph what the PID response looks like! ***");
 
@@ -66,11 +58,6 @@ task main()
 
     // Add pid to motor value
     motorSpeed = pidResult;
-
-    // This "simulates" our robot's dynamics, not necessary for a real robot
-    motorSpeed += momentum;
-    momentum += pidResult * kMomentum;
-    writeDebugStreamLine("%f", motorSpeed);
 
     // There is a bug in RobotC where if you print too fast,
     //   you might get weird characters at random
