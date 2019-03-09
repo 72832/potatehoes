@@ -34,7 +34,7 @@ task main()
 			
 			//gets input and drives puncher motors
 			//if left back trigger is pressed
-			if (vexRT[Btn5D] == 1) {
+			if (vexRT[Btn5U]) {
 				motor[puncher1] = 127;
 				motor[puncher2] = 127;
 			}else{
@@ -47,11 +47,11 @@ task main()
 		
 		//gets input and drives intake motor
 		//if right back trigger is pressed, drive intake forward
-		if (vexRT[Btn6D] == 1) {
+		if (vexRT[Btn6U]) {
 			motor[intake] = 127;
 			
 		//if right front trigger is pressed, drive intake backward
-		} else if (vexRT[Btn6U] == 1) {
+		} else if (vexRT[Btn6UD]) {
 			motor[intake] = -127;
 			
 		//if none of those buttons are pressed, do not drive the intake
