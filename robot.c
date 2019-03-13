@@ -68,7 +68,7 @@
 
 #include "include/jpearman/SmartMotorLib.c"
 
-#include "include/BNSLibrary/BNSLib.h"
+#include "BNSLibrary/BNSLib.h"
 
 #include "Vex_Competition_Includes.c"  // Main competition background code...do not modify!
 
