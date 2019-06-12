@@ -68,11 +68,11 @@
 
 #include "include/jpearman/SmartMotorLib.c"
 
-#include "include/BNSLibrary/BNSLib.h"
+#include "BNSLibrary/BNSLib.h"
 
 #include "Vex_Competition_Includes.c"  // Main competition background code...do not modify!
 
-#include "include/API.h"
+#include "include/testAPI.h"
 
 /*********************************************************************/
 /*********************************************************************/
@@ -95,9 +95,38 @@ task autonomous(){
     resetEncoders();
 
     clearLCD();
-    
-    driveForward(1.0);
-    
+
+  // Output instructions to view the PID response
+  writeDebugStreamLine("*** Copy/paste all the results in the debug window to Excel and graph what the PID response looks like! ***");
+
+
+  // Loop through many times so we can graph
+  //  the PID loop
+  for(int i = 0; i < 200; i++)
+  {
+  	  pidSensorCurrentValue = SensorValue[leftEncoder]*-1;
+
+    // This calculates how far off we are from the true value
+    //  The PID will return a response that will hopefully minimize this error over time
+    float pidResult = PIDCompute(&pid1, /*calculate error*/pidSensorCurrentValue - pidReqVal);
+    displayLCDNumber(0, 0, pidResult);
+
+   	driveFunc(pidResult);
+
+    // There is a bug in RobotC where if you print too fast,
+    //   you might get weird characters at random
+    delay(20);
+  }
+  
+
+	while(!MotionProfileIsComplete(&prof1, time))
+	{
+		float velocity = MotionProfileCompute(&prof1, time);
+		writeDebugStreamLine("%f", velocity);
+		displayLCDNumber(0, 0, velocity);
+		driveFunc(velocity);
+		time+=dt;
+	}
 }
 
 /*********************************************************************/
